@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="zh-Hant"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="多益衝刺">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>多益衝刺計畫</title>
+<meta name="theme-color" content="#0E6B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: 單欄手機 app，答案卡劃記為視覺母題；底部分頁導覽 */
+:root{
+  --paper:#EEF1F4; --card:#FFFFFF; --ink:#1D2330; --muted:#5D6676; --line:#D6DCE4;
+  --accent:#0E6B66; --accent-soft:#DDEFEC; --pencil:#2B2F38;
+  --L:#3456A0; --R:#0E6B66; --V:#8A5A1E; --M:#A23838; --ok:#2E7D4F;
+  --sans:"Noto Sans TC",-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11141A; --card:#1A1E26; --ink:#E7EAF0; --muted:#9AA3B3; --line:#2A303B;
+  --accent:#4DB6AC; --accent-soft:#163330; --pencil:#D9DDE4;
+  --L:#8EA9E6; --R:#4DB6AC; --V:#D6A764; --M:#E68A8A; --ok:#6CC592; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11141A; --card:#1A1E26; --ink:#E7EAF0; --muted:#9AA3B3; --line:#2A303B;
+  --accent:#4DB6AC; --accent-soft:#163330; --pencil:#D9DDE4;
+  --L:#8EA9E6; --R:#4DB6AC; --V:#D6A764; --M:#E68A8A; --ok:#6CC592; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px calc(88px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{margin:0;text-wrap:balance}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:500}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.count{display:flex;align-items:baseline;gap:6px}
+.count b{font-family:var(--mono);font-size:56px;line-height:1;font-weight:600;color:var(--accent);letter-spacing:-.02em}
+.count span{font-size:15px;color:var(--muted)}
+.goal{text-align:right;font-size:13px;color:var(--muted)}
+.goal .mono{color:var(--ink);font-size:15px}
+
+section{display:flex;flex-direction:column;gap:12px;padding-top:18px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);width:max-content}
+
+/* day nav */
+.daybar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.daybar h2{font-size:20px}
+.navbtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;cursor:pointer}
+.navbtn:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;border-radius:10px;border:1px solid transparent;background:none;color:var(--ink);cursor:pointer;font:inherit}
+.wd small{font-size:11px;color:var(--muted)}
+.wd .n{font-family:var(--mono);font-size:14px}
+.wd .dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted)}
+.wd .dot.half{background:linear-gradient(90deg,var(--pencil) 50%,transparent 50%)}
+.wd .dot.full{background:var(--pencil);border-color:var(--pencil)}
+.wd.off .n{color:var(--accent)}
+.wd.sel{border-color:var(--accent);background:var(--card)}
+.wd.exam .n{color:var(--M);font-weight:600}
+
+/* tasks */
+.meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.tasks{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:14px;border-top:1px solid var(--line);cursor:pointer;user-select:none}
+.task:first-child{border-top:0}
+.bub{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--muted);display:grid;place-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:1px;transition:background .15s}
+.task.done .bub{background:var(--pencil);border-color:var(--pencil);color:transparent}
+.task.done .tt{text-decoration:line-through;color:var(--muted)}
+.tt{font-weight:500;min-width:0}
+.td{font-size:13px;color:var(--muted);margin-top:2px}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;margin-right:6px}
+.tag.L{color:var(--L)}.tag.R{color:var(--R)}.tag.V{color:var(--V)}.tag.M{color:var(--M)}
+.min{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
+.note{font-size:13px;color:var(--muted);padding:12px 14px;border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0}
+.progress{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .25s}
+
+/* plan */
+.wk{display:flex;flex-direction:column;gap:8px;padding-bottom:6px}
+.wk h3{font-size:16px;display:flex;justify-content:space-between;gap:8px}
+.wk p{margin:0;font-size:13px;color:var(--muted)}
+.rows{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left;font:inherit;color:inherit}
+.row:first-child{border-top:0}
+.row .d{font-family:var(--mono);font-size:13px}
+.row .d small{display:block;font-family:var(--sans);color:var(--muted);font-size:11px}
+.row .s{font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row.today{background:var(--accent-soft)}
+.row .st{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.row .st.ok{color:var(--ok)}
+
+/* scores */
+form.sc{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;min-width:0}
+.full{grid-column:1/-1}
+.btn{font:inherit;font-weight:500;border:0;border-radius:10px;padding:11px 14px;background:var(--accent);color:var(--card);cursor:pointer}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
+.chart svg{display:block;width:100%;height:auto}
+.slist{display:flex;flex-direction:column}
+.srow{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.srow .tot{font-family:var(--mono);font-weight:600}
+.del{background:none;border:0;color:var(--muted);font-size:18px;cursor:pointer;padding:0 4px}
+
+/* settings */
+.days7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.days7 button{font:inherit;padding:8px 0;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.days7 button.on{background:var(--accent);border-color:var(--accent);color:var(--card)}
+
+/* bottom nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);z-index:5}
+nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav button{font:inherit;font-size:12px;background:none;border:0;color:var(--muted);padding:10px 0 8px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7}
+nav button.on{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head><body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">距離 <span id="examLbl"></span> 多益</div>
+      <div class="count"><b id="cd">0</b><span>天</span></div>
+    </div>
+    <div class="goal">目標 <span class="mono">800–900</span><br>最近 <span class="mono" id="latest">675</span></div>
+  </header>
+  <main id="view"></main>
+</div>
+
+<nav><div class="in">
+  <button data-tab="today" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>今天</button>
+  <button data-tab="plan"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>計畫</button>
+  <button data-tab="score"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 15l4-4 3 3 5-6"/></svg>成績</button>
+  <button data-tab="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>設定</button>
+</div></nav>
+
+<script>
+(function(){
+const WD=['日','一','二','三','四','五','六'];
+const DEF={start:'2026-10-19',exam:'2026-11-29',off:[5,6],workMin:90,offMin:240};
+const store={get(k,d){try{const v=localStorage.getItem('toeic.'+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem('toeic.'+k,JSON.stringify(v))}catch(e){}}};
+let S=Object.assign({},DEF,store.get('settings',{}));
+let DONE=store.get('done',{});
+let SCORES=store.get('scores',[{id:1,date:'2026-10-19',label:'最近一次成績',L:325,R:350}]);
+
+const pd=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const add=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const diff=(a,b)=>Math.round((pd(b)-pd(a))/864e5);
+const todayStr=ymd(new Date());
+const md=s=>{const d=pd(s);return (d.getMonth()+1)+'/'+d.getDate()};
+
+const PH=[
+ {n:'診斷＋打底',g:'週五做第 1 回模考摸清底細，同時把《怪物講師多益速解》剩下的一半讀完。'},
+ {n:'Part 7 提速',g:'Part 5 壓到 9 分鐘內做完，Part 7 練到每題平均 1 分鐘。'},
+ {n:'聽力 Part 3/4',g:'練成「先看題目、再聽對話」，並讀完《多益解密》。'},
+ {n:'模考循環 I',g:'每週一回全真模考，錯題當週訂正完。閱讀時間分配照模考規則走。'},
+ {n:'模考循環 II',g:'最後一回模考。目標是閱讀 75 分鐘內全部作答完，不留空白。'},
+ {n:'考前收斂',g:'不學新東西，只看錯題本、維持手感，調整作息。'}
+];
+const isOff=d=>S.off.includes(pd(d).getDay());
+function phaseOf(d){
+  const toExam=diff(d,S.exam);
+  if(toExam<=6)return 5;
+  return Math.max(0,Math.min(4,Math.floor(diff(S.start,d)/7)));
+}
+function offRank(d){ // 這是本週區塊中的第幾個休假日（0 起算）
+  const w=Math.floor(diff(S.start,d)/7),bs=add(pd(S.start),w*7);let r=0;
+  for(let i=0;i<7;i++){const x=ymd(add(bs,i));if(x===d)return r;if(isOff(x))r++}
+  return r;
+}
+const T=(tag,t,m,d,fixed)=>({tag,t,m,d,fixed});
+const vocab=(m=20)=>T('V','單字',m,'《怪物講師 單字+文法》往下推 1 單元，並複習前兩天的字');
+
+function tasksFor(d){
+  const toExam=diff(d,S.exam);
+  if(toExam===0)return{type:'考試日',list:[T('M','考試',0,'帶身分證正本與准考證，提早 30 分鐘到考場。閱讀照練習的分配：Part 5 九分鐘、Part 6 八分鐘、其餘全給 Part 7。',true)]};
+  if(toExam<0||diff(S.start,d)<0)return null;
+  const off=isOff(d),p=phaseOf(d);let L=[];
+  if(toExam===1){
+    return{type:'休息日',list:[T('R','錯題本',30,'只翻錯題本與 Part 5 文法筆記，不做新題'),T('M','準備',10,'確認考場、交通、身分證、准考證、2B 鉛筆與橡皮擦',true),T('M','早睡',0,'今晚不熬夜，明天腦袋清醒比多讀一小時有用',true)]};
+  }
+  if(off){
+    const r=offRank(d),w=Math.floor(diff(S.start,d)/7);
+    if(p===5){
+      L=[T('M','閱讀計時重做',75,'拿第 1 回模考的閱讀重做一次，照正式 75 分鐘計時',true),T('R','對答與訂正',45,'錯題寫進錯題本，標出是時間不夠還是看不懂'),vocab(20),T('L','聽力暖身',30,'把模考 Part 3/4 錯題音檔再聽一次')];
+    }else if(r===0){
+      const n=Math.min(w+1,5);
+      L=[T('M',`第 ${n} 回全真模考`,120,'《神猜解 5 回全真模擬試題》。聽力 45 分＋閱讀 75 分一次做完不暫停。閱讀分配：Part 5 九分鐘、Part 6 八分鐘、剩下 58 分鐘給 Part 7',true),
+         T('M','對答、記成績',20,'把聽力與閱讀分數記到「成績」頁'),
+         T('R','整理錯題',60,'錯題分三類：單字不認識、文法、時間不夠沒做到'),vocab(20)];
+    }else{
+      L=[vocab(20),T('R','模考錯題重做',60,'昨天的錯題蓋住答案再做一次，說得出理由才算懂'),
+         T('R','Part 7 多篇限時',45,'《神猜解多益閱讀》雙篇或三篇 2 組，每組照題數 × 1 分鐘計時'),
+         T('L','聽力精聽',45,'模考 Part 3/4 錯的那幾段逐句聽寫，再跟讀 3 遍'),
+         p<=2?T('R',p===2?'《多益解密》':'《怪物講師多益速解》',40,p===2?'讀 2 節，把出題邏輯抄進筆記':'讀 2 章，目標本週讀完'):T('R','Part 5 文法弱點',40,'挑錯最多的文法類型，回《單字+文法》對應章節複習')];
+    }
+  }else{
+    const dow=pd(d).getDay();
+    if(p===0)L=[vocab(),T('R','《怪物講師多益速解》',40,'讀 1 章（目前 52%），本週讀完'),T('R','Part 5 限時',15,'30 題限時 9 分鐘，對答後抄錯題'),T('L','Part 2',15,'1 回 25 題，錯的重聽到聽懂為止')];
+    else if(p===1)L=[vocab(),T('R','Part 5 限時',15,'30 題 9 分鐘，速度比上週快才算過關'),T('R','Part 7 單篇計時',40,'《神猜解多益閱讀》單篇 5 篇，每篇限時「題數 × 1 分鐘」，超時就先猜下一題'),T('R','找原文定位',15,'每題錯的都要在文章裡畫出答案根據的那一句')];
+    else if(p===2)L=[vocab(),T('L','Part 3/4 預讀',35,'各 1 組：音檔播指示語時先掃題目與選項，聽完後錯題聽寫'),T('R','《多益解密》',20,'讀 1 節（目前 49%）'),T('R','Part 5 限時',15,'30 題 9 分鐘')];
+    else if(p<=4){
+      L=dow%2?[vocab(),T('R','Part 5+6 限時',20,'46 題限時 17 分鐘，這是正式考試的時間'),T('R','Part 7 多篇',35,'雙篇或三篇 2 組，計時'),T('R','錯題本',15,'把今天的錯題寫進去')]
+             :[vocab(),T('L','Part 3/4',30,'各 1 組，先預讀題目再聽'),T('R','Part 7 單篇',25,'3 篇計時'),T('R','錯題本',15,'翻上週的錯題，能直接說出答案才打勾')];
+    }else L=[vocab(15),T('R','錯題本',30,'只看錯題，不做新題'),T('L','跟讀',15,'模考 Part 3/4 挑一段跟讀')];
+  }
+  const budget=off?S.offMin:S.workMin,base=off?240:90;
+  const fixedSum=L.filter(x=>x.fixed).reduce((a,x)=>a+x.m,0);
+  const flexSum=L.filter(x=>!x.fixed).reduce((a,x)=>a+x.m,0);
+  const f=flexSum?Math.max(.3,(budget-(off?fixedSum:0))/(base-(off?fixedSum:0))):1;
+  L=L.map(x=>x.fixed||!x.m?x:Object.assign({},x,{m:Math.max(5,Math.round(x.m*f/5)*5)}));
+  return{type:off?'休假日':'上班日',list:L};
+}
+
+let tab='today',sel=null;
+function defaultSel(){
+  if(diff(S.start,todayStr)<0)return S.start;
+  if(diff(todayStr,S.exam)<0)return S.exam;
+  return todayStr;
+}
+const doneOf=d=>DONE[d]||[];
+function statusOf(d){const t=tasksFor(d);if(!t)return 0;const n=t.list.length,k=doneOf(d).length;return k===0?0:k>=n?2:1}
+
+function header(){
+  const e=pd(S.exam);
+  document.getElementById('examLbl').textContent=(e.getMonth()+1)+'/'+e.getDate()+'（'+WD[e.getDay()]+'）';
+  document.getElementById('cd').textContent=Math.max(0,diff(todayStr,S.exam));
+  const last=SCORES.slice().sort((a,b)=>a.date<b.date?-1:1).pop();
+  document.getElementById('latest').textContent=last?(last.L+last.R):'—';
+}
+
+function renderToday(){
+  const d=sel||defaultSel(),t=tasksFor(d),dd=pd(d);
+  const bs=add(dd,-dd.getDay());
+  let wk='';
+  for(let i=0;i<7;i++){const x=ymd(add(bs,i)),st=statusOf(x),inR=tasksFor(x);
+    wk+=`<button class="wd${x===d?' sel':''}${isOff(x)?' off':''}${x===S.exam?' exam':''}" data-d="${x}" aria-label="${md(x)}"><small>${WD[i]}</small><span class="n">${add(bs,i).getDate()}</span><span class="dot ${st===2?'full':st===1?'half':''}" style="${inR?'':'visibility:hidden'}"></span></button>`}
+  let body='';
+  if(!t){body=`<div class="note">這天不在衝刺計畫範圍內（${md(S.start)} 到 ${md(S.exam)}）。</div>`}
+  else{
+    const dn=doneOf(d),tot=t.list.reduce((a,x)=>a+x.m,0),letters='ABCD';
+    const p=phaseOf(d);
+    body=`<span class="chip">第 ${Math.min(6,Math.floor(diff(S.start,d)/7)+1)} 週・${PH[p].n}</span>
+    <div class="meta"><span>${t.type}${d===todayStr?'・今天':''}</span><span class="mono">${tot?Math.floor(tot/60)+' 小時 '+(tot%60)+' 分':''}</span></div>
+    <div class="progress"><i style="width:${t.list.length?dn.length/t.list.length*100:0}%"></i></div>
+    <div class="tasks">${t.list.map((x,i)=>`<div class="task${dn.includes(i)?' done':''}" data-i="${i}" role="checkbox" tabindex="0" aria-checked="${dn.includes(i)}">
+      <span class="bub">${letters[i%4]}</span>
+      <div><div class="tt"><span class="tag ${x.tag}">${{L:'聽力',R:'閱讀',V:'單字',M:'考試'}[x.tag]}</span>${x.t}</div><div class="td">${x.d}</div></div>
+      <span class="min">${x.m?x.m+'′':''}</span></div>`).join('')}</div>
+    <div class="note">${PH[p].g}</div>`;
+  }
+  return `<section><div class="daybar"><button class="navbtn" data-step="-1" aria-label="前一天">‹</button>
+    <h2>${dd.getMonth()+1} 月 ${dd.getDate()} 日（${WD[dd.getDay()]}）</h2>
+    <button class="navbtn" data-step="1" aria-label="後一天">›</button></div>
+    <div class="week">${wk}</div>${body}</section>`;
+}
+
+function renderPlan(){
+  const days=diff(S.start,S.exam);let groups={};
+  for(let i=0;i<=days;i++){const x=ymd(add(pd(S.start),i)),w=Math.min(Math.floor(i/7),5);(groups[w]=groups[w]||[]).push(x)}
+  let h=`<section><div class="note">《神猜解》兩本和《怪物講師 單字+文法》目前是試用版。你的書櫃還有 3 個未使用兌換碼，先確認能不能換成完整版，這份計畫的模考與 Part 7 練習都靠這兩本。</div>`;
+  Object.keys(groups).forEach(w=>{
+    const ds=groups[w],p=phaseOf(ds[0]),k=ds.filter(x=>statusOf(x)===2).length;
+    h+=`<div class="wk"><h3><span>第 ${+w+1} 週・${PH[p].n}</span><span class="mono muted" style="font-size:13px">${k}/${ds.length}</span></h3><p>${md(ds[0])}–${md(ds[ds.length-1])}　${PH[p].g}</p>
+    <div class="rows">${ds.map(x=>{const t=tasksFor(x),st=statusOf(x),dn=doneOf(x).length;
+      return `<button class="row${x===todayStr?' today':''}" data-d="${x}"><span class="d">${md(x)}<small>${WD[pd(x).getDay()]}・${t?t.type:''}</small></span><span class="s">${t?t.list.map(y=>y.t).join('・'):''}</span><span class="st mono${st===2?' ok':''}">${t?dn+'/'+t.list.length:''}</span></button>`}).join('')}</div></div>`});
+  return h+'</section>';
+}
+
+function renderScore(){
+  const s=SCORES.slice().sort((a,b)=>a.date<b.date?-1:1);
+  const W=320,H=170,pl=34,pr=10,pt=12,pb=24,lo=Math.min(600,...s.map(x=>x.L+x.R))-20,hi=990;
+  const y=v=>pt+(H-pt-pb)*(1-(v-lo)/(hi-lo));
+  const x=i=>s.length<2?(pl+W-pr)/2:pl+(W-pl-pr)*i/(s.length-1);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="成績走勢">`;
+  [800,900].forEach(v=>{svg+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--accent)" stroke-dasharray="3 4" stroke-width="1"/><text x="${pl-4}" y="${y(v)+4}" text-anchor="end" font-size="10" fill="var(--accent)" font-family="IBM Plex Mono,monospace">${v}</text>`});
+  [lo+20>600?null:600,700].filter(Boolean).forEach(v=>{if(v>lo)svg+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${pl-4}" y="${y(v)+4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${v}</text>`});
+  if(s.length){
+    svg+=`<polyline fill="none" stroke="var(--ink)" stroke-width="2" points="${s.map((p,i)=>x(i)+','+y(p.L+p.R)).join(' ')}"/>`;
+    s.forEach((p,i)=>{svg+=`<circle cx="${x(i)}" cy="${y(p.L+p.R)}" r="${i===s.length-1?4.5:3}" fill="${i===s.length-1?'var(--accent)':'var(--card)'}" stroke="var(--ink)" stroke-width="1.5"/>`;
+      svg+=`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${md(p.date)}</text>`});
+  }
+  svg+='</svg>';
+  const next=SCORES.filter(z=>/模考/.test(z.label)).length+1;
+  return `<section><h2 style="font-size:18px">成績走勢</h2><div class="chart">${svg}</div>
+  <form class="sc" id="scForm">
+    <label class="full">名稱<input id="scLabel" value="第 ${Math.min(next,5)} 回模考"></label>
+    <label>聽力（5–495）<input id="scL" type="number" inputmode="numeric" min="5" max="495" step="5" required></label>
+    <label>閱讀（5–495）<input id="scR" type="number" inputmode="numeric" min="5" max="495" step="5" required></label>
+    <label class="full">日期<input id="scDate" type="date" value="${todayStr}"></label>
+    <button class="btn full" type="submit">記下成績</button>
+  </form>
+  <div class="slist">${s.slice().reverse().map(p=>`<div class="srow"><span>${p.label}<br><small class="muted mono">${p.date}</small></span><span class="mono" style="color:var(--L)">L ${p.L}</span><span class="mono" style="color:var(--R)">R ${p.R}</span><span><span class="tot">${p.L+p.R}</span><button class="del" data-del="${p.id}" aria-label="刪除">×</button></span></div>`).join('')}</div>
+  <p class="muted" style="font-size:13px;margin:0">模考分數用書上附的換算表換成 5–495 分再填。要到 800，大約需要聽力 410、閱讀 390。</p></section>`;
+}
+
+let confirmReset=false;
+function renderSet(){
+  return `<section><h2 style="font-size:18px">設定</h2>
+  <form class="sc" id="setForm">
+    <label class="full">考試日期<input id="sExam" type="date" value="${S.exam}"></label>
+    <label class="full">計畫起始日<input id="sStart" type="date" value="${S.start}"></label>
+    <div class="full"><div class="eyebrow" style="margin-bottom:6px">休假日（點選切換）</div>
+      <div class="days7">${WD.map((w,i)=>`<button type="button" data-off="${i}" class="${S.off.includes(i)?'on':''}">${w}</button>`).join('')}</div></div>
+    <label>上班日讀書（分鐘）<input id="sWork" type="number" inputmode="numeric" min="30" max="300" step="15" value="${S.workMin}"></label>
+    <label>休假日讀書（分鐘）<input id="sOff" type="number" inputmode="numeric" min="150" max="600" step="15" value="${S.offMin}"></label>
+    <button class="btn full" type="submit">儲存設定</button>
+  </form>
+  <p class="muted" style="font-size:13px;margin:0">休假日的模考固定 2 小時，其他項目會依你設定的時間等比例縮放。</p>
+  <button class="btn ghost" id="reset">${confirmReset?'再按一次確認清除所有打勾':'清除所有打勾紀錄'}</button></section>`;
+}
+
+function render(){
+  header();
+  const v=document.getElementById('view');
+  v.innerHTML=tab==='today'?renderToday():tab==='plan'?renderPlan():tab==='score'?renderScore():renderSet();
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+}
+
+function toggle(i){
+  const d=sel||defaultSel(),a=doneOf(d).slice(),k=a.indexOf(i);
+  k<0?a.push(i):a.splice(k,1);DONE[d]=a;store.set('done',DONE);render();
+}
+
+document.addEventListener('click',e=>{
+  const nb=e.target.closest('nav button');if(nb){tab=nb.dataset.tab;confirmReset=false;render();window.scrollTo(0,0);return}
+  const st=e.target.closest('[data-step]');if(st){sel=ymd(add(pd(sel||defaultSel()),+st.dataset.step));render();return}
+  const dd=e.target.closest('[data-d]');if(dd){sel=dd.dataset.d;tab='today';render();window.scrollTo(0,0);return}
+  const tk=e.target.closest('.task');if(tk){toggle(+tk.dataset.i);return}
+  const dl=e.target.closest('[data-del]');if(dl){SCORES=SCORES.filter(s=>s.id!=dl.dataset.del);store.set('scores',SCORES);render();return}
+  const of=e.target.closest('[data-off]');if(of){const i=+of.dataset.off;S.off=S.off.includes(i)?S.off.filter(x=>x!==i):S.off.concat(i);of.classList.toggle('on');return}
+  if(e.target.id==='reset'){if(confirmReset){DONE={};store.set('done',DONE);confirmReset=false}else confirmReset=true;render()}
+});
+document.addEventListener('keydown',e=>{const tk=e.target.closest&&e.target.closest('.task');if(tk&&(e.key===' '||e.key==='Enter')){e.preventDefault();toggle(+tk.dataset.i)}});
+document.addEventListener('submit',e=>{
+  e.preventDefault();
+  if(e.target.id==='scForm'){
+    const L=+document.getElementById('scL').value,R=+document.getElementById('scR').value;
+    if(!(L>=5&&L<=495&&R>=5&&R<=495))return;
+    SCORES.push({id:Date.now(),date:document.getElementById('scDate').value||todayStr,label:document.getElementById('scLabel').value||'模考',L,R});
+    store.set('scores',SCORES);render();
+  }else if(e.target.id==='setForm'){
+    S.exam=document.getElementById('sExam').value||S.exam;S.start=document.getElementById('sStart').value||S.start;
+    S.workMin=Math.max(30,+document.getElementById('sWork').value||90);S.offMin=Math.max(150,+document.getElementById('sOff').value||240);
+    store.set('settings',S);sel=null;tab='today';render();
+  }
+});
+
+render();
+try{ if('serviceWorker' in navigator && !/claude|anthropic/.test(location.hostname) && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{}) }catch(e){}
+})();
+</script>
+
+</body></html>
