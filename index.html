@@ -503,23 +503,44 @@ function renderScore(){
 }
 
 const VAPID='BL2nHqgCqr-NU9CuEKMey_kbUSPpD1hu7KbNnDLoXF3kZHO9ckOAPGQI_94WGpa-J3nvWQ3HMfJx6imzlBORqHs';
-let PUSHCODE=store.get('pushcode','');
+const FB={project:'toeic-plan',key:'AIzaSyDT8hpNyrgt_ZKtx8O7gJ6I0EfoNnPsxqw'};
+let PUSHID=store.get('pushid','');
 const hrs=v=>Array.from({length:17},(_,i)=>i+6).map(h=>`<option value="${h}"${h==v?' selected':''}>${h}:00</option>`).join('');
 function b64u(s){const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))}
 function pushMsg(t){const el=document.getElementById('pushMsg');if(el)el.textContent=t}
+function fsVal(v){
+  if(v===null||v===undefined)return{nullValue:null};
+  if(Array.isArray(v))return{arrayValue:{values:v.map(fsVal)}};
+  if(typeof v==='number')return Number.isInteger(v)?{integerValue:String(v)}:{doubleValue:v};
+  if(typeof v==='boolean')return{booleanValue:v};
+  if(typeof v==='object')return{mapValue:{fields:Object.fromEntries(Object.entries(v).map(([k,x])=>[k,fsVal(x)]))}};
+  return{stringValue:String(v)};
+}
+async function syncPush(subJson){
+  if(!PUSHID)return false;
+  try{
+    if(!subJson){const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();if(!sub)return false;subJson=sub.toJSON()}
+    const doc={sub:subJson,s:{start:S.start,exam:S.exam,off:S.off,workMin:S.workMin,offMin:S.offMin,pw:S.pw,po:S.po},updatedAt:new Date().toISOString()};
+    const url=`https://firestore.googleapis.com/v1/projects/${FB.project}/databases/(default)/documents/toeic_push/${PUSHID}?key=${FB.key}`;
+    const r=await fetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:fsVal(doc).mapValue.fields})});
+    return r.ok;
+  }catch(e){return false}
+}
 async function enablePush(){
   S.pw=+document.getElementById('pw').value;S.po=+document.getElementById('po').value;store.set('settings',S);
   const standalone=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
   if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){
     pushMsg(standalone?'這台裝置不支援網頁推播，請確認 iOS 已更新到 16.4 以上。':'請先用 Safari 打開網站，點「分享 → 加入主畫面」，再從主畫面的圖示打開 APP 開啟提醒。');return}
   try{
+    pushMsg('設定中…');
     const perm=await Notification.requestPermission();
     if(perm!=='granted'){pushMsg('通知權限沒有開啟。可到 iPhone「設定 → 通知」找到這個 APP 打開。');return}
     const reg=await navigator.serviceWorker.ready;
     let sub=await reg.pushManager.getSubscription();
     if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID)});
-    PUSHCODE=JSON.stringify({sub:sub.toJSON(),s:{start:S.start,exam:S.exam,off:S.off,workMin:S.workMin,offMin:S.offMin,pw:S.pw,po:S.po}});
-    store.set('pushcode',PUSHCODE);render();pushMsg('通知已開啟。把下面的代碼複製，貼到 GitHub 的 PUSH_SUB，提醒就會開始運作。');
+    if(!PUSHID){PUSHID=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');store.set('pushid',PUSHID)}
+    const ok=await syncPush(sub.toJSON());
+    render();pushMsg(ok?'提醒已開啟並同步完成。之後修改時間或休假日都會自動更新。':'通知已開啟，但同步失敗。請確認網路後按「重新同步提醒」。');
   }catch(e){pushMsg('開啟失敗：'+(e&&e.message||e))}
 }
 let confirmReset=false;
@@ -540,9 +561,8 @@ function renderSet(){
   <div class="sc" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px">
     <label>上班日提醒時間<select id="pw">${hrs(S.pw)}</select></label>
     <label>休假日提醒時間<select id="po">${hrs(S.po)}</select></label>
-    <button class="btn full" type="button" id="pushOn">開啟每日提醒</button>
-    <div class="full muted" id="pushMsg" style="font-size:13px">每天在設定的時間推播當天的讀書任務。需要 iOS 16.4 以上，並從主畫面的 APP 圖示打開。</div>
-    ${PUSHCODE?`<label class="full">提醒代碼（貼到 GitHub 的 PUSH_SUB）<textarea id="pushCode" readonly rows="4" style="font:12px var(--mono);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px;width:100%;resize:vertical">${esc(PUSHCODE)}</textarea></label><button class="btn ghost full" type="button" id="copyCode">複製代碼</button>`:''}
+    <button class="btn full" type="button" id="pushOn">${PUSHID?'重新同步提醒':'開啟每日提醒'}</button>
+    <div class="full muted" id="pushMsg" style="font-size:13px">${PUSHID?'提醒已開啟。修改時間或休假日會自動同步，不用再做任何事。':'每天在設定的時間推播當天的讀書任務。需要 iOS 16.4 以上，並從主畫面的 APP 圖示打開。'}</div>
   </div>
   <button class="btn ghost" id="reset">${confirmReset?'再按一次確認清除所有打勾':'清除所有打勾紀錄'}</button></section>`;
 }
@@ -719,9 +739,9 @@ document.addEventListener('click',e=>{
   const dl=e.target.closest('[data-del]');if(dl){SCORES=SCORES.filter(s=>s.id!=dl.dataset.del);store.set('scores',SCORES);render();return}
   const of=e.target.closest('[data-off]');if(of){const i=+of.dataset.off;S.off=S.off.includes(i)?S.off.filter(x=>x!==i):S.off.concat(i);of.classList.toggle('on');return}
   if(e.target.id==='pushOn'){enablePush();return}
-  if(e.target.id==='copyCode'){const ta=document.getElementById('pushCode');try{navigator.clipboard.writeText(PUSHCODE).then(()=>{e.target.textContent='已複製'},()=>{ta.select()})}catch(err){ta.select()}return}
   if(e.target.id==='reset'){if(confirmReset){DONE={};store.set('done',DONE);confirmReset=false}else confirmReset=true;render()}
 });
+document.addEventListener('change',e=>{if(e.target.id==='pw'||e.target.id==='po'){S[e.target.id]=+e.target.value;store.set('settings',S);if(PUSHID)syncPush().then(ok=>pushMsg(ok?'已同步新的提醒時間。':'同步失敗，請稍後按「重新同步提醒」。'))}});
 document.addEventListener('keydown',e=>{const tk=e.target.closest&&e.target.closest('.task');if(tk&&(e.key===' '||e.key==='Enter')){e.preventDefault();toggle(+tk.dataset.i)}});
 document.addEventListener('submit',e=>{
   e.preventDefault();
@@ -733,7 +753,7 @@ document.addEventListener('submit',e=>{
   }else if(e.target.id==='setForm'){
     S.exam=document.getElementById('sExam').value||S.exam;S.start=document.getElementById('sStart').value||S.start;
     S.target=Math.min(990,Math.max(300,+document.getElementById('sTarget').value||800));S.workMin=Math.max(30,+document.getElementById('sWork').value||90);S.offMin=Math.max(150,+document.getElementById('sOff').value||240);
-    store.set('settings',S);sel=null;tab='today';render();
+    store.set('settings',S);sel=null;tab='today';render();syncPush();
   }
 });
 

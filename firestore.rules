@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 多益 APP 的推播訂閱：只能用隨機裝置 ID 寫入自己的那筆，任何人都不能從網頁讀取。
+    match /toeic_push/{id} {
+      allow read, delete: if false;
+      allow create, update: if id.size() == 32
+        && request.resource.data.keys().hasOnly(['sub', 's', 'updatedAt'])
+        && request.resource.data.sub is map
+        && request.resource.data.s is map;
+    }
+  }
+}

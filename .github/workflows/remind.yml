@@ -15,12 +15,12 @@ jobs:
       TZ: Asia/Taipei
       VAPID_PUBLIC: BL2nHqgCqr-NU9CuEKMey_kbUSPpD1hu7KbNnDLoXF3kZHO9ckOAPGQI_94WGpa-J3nvWQ3HMfJx6imzlBORqHs
       VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
-      PUSH_SUB: ${{ secrets.PUSH_SUB }}
+      FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
       FORCE: ${{ inputs.force }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install web-push@3.6.7 --no-save --silent
+      - run: npm install web-push@3.6.7 firebase-admin@12.7.0 --no-save --silent
       - run: node push.js
