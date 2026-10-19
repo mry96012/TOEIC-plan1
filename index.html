@@ -116,10 +116,45 @@ input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--paper
 
 /* bottom nav */
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);z-index:5}
-nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 nav button{font:inherit;font-size:12px;background:none;border:0;color:var(--muted);padding:10px 0 8px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
 nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7}
 nav button.on{color:var(--accent)}
+/* practice */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode{display:flex;flex-direction:column;gap:4px;text-align:left;font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;min-width:0}
+.mode b{font-size:16px}
+.mode span{font-size:12px;color:var(--muted)}
+.mode .big{font-family:var(--mono);font-size:22px;color:var(--accent);font-weight:600}
+.qbar{display:flex;justify-content:space-between;align-items:center;gap:8px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--paper);padding-block:10px;z-index:3;border-bottom:1px solid var(--line)}
+.timer{font-family:var(--mono);font-size:20px;font-weight:600}
+.timer.over{color:var(--M)}
+.qtext{font-size:17px;line-height:1.6;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;text-align:left;font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer}
+.opt .bub{margin:0}
+.opt.pick{border-color:var(--pencil)}
+.opt.pick .bub{background:var(--pencil);border-color:var(--pencil);color:var(--card)}
+.opt.right{border-color:var(--ok)}
+.opt.right .bub{background:var(--ok);border-color:var(--ok);color:var(--card)}
+.opt.wrong{border-color:var(--M)}
+.opt.wrong .bub{background:var(--M);border-color:var(--M);color:var(--card)}
+.passage{white-space:pre-wrap;font-size:15px;line-height:1.65;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;font-family:Georgia,"Noto Serif TC",serif}
+.qblock{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+.qblock h4{margin:0;font-size:15px;font-weight:500}
+.exp{font-size:13px;color:var(--muted);padding:10px 12px;background:var(--accent-soft);border-radius:10px}
+.result{display:flex;align-items:baseline;gap:10px}
+.result b{font-family:var(--mono);font-size:44px;color:var(--accent)}
+.rv{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-bottom:1px solid var(--line)}
+.rv .s{font-size:15px}
+.rv .a{font-size:14px}
+.ok{color:var(--ok)}.bad{color:var(--M)}
+.card{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;cursor:pointer;text-align:center}
+.card .w{font-size:30px;font-weight:600;font-family:Georgia,serif;word-break:break-word}
+.card .m{font-size:18px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.go{font:inherit;font-size:12px;font-weight:500;color:var(--accent);background:none;border:1px solid var(--accent);border-radius:999px;padding:2px 10px;margin-top:6px;cursor:pointer}
+.plist{display:flex;flex-direction:column}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -138,10 +173,171 @@ nav button.on{color:var(--accent)}
 <nav><div class="in">
   <button data-tab="today" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>今天</button>
   <button data-tab="plan"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>計畫</button>
+  <button data-tab="prac"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>練習</button>
   <button data-tab="score"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 15l4-4 3 3 5-6"/></svg>成績</button>
   <button data-tab="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>設定</button>
 </div></nav>
 
+<script>
+// 原創多益練習題庫。每題正解寫在選項第一個，程式執行時會打亂順序。
+window.BANK = {
+p5: [
+["The new software will help employees ___ their tasks more efficiently.","complete|completion|completely|completed","詞性","help + 受詞 + 原形動詞，空格要動詞原形。"],
+["Ms. Lin has been ___ to the position of regional manager.","promoted|promotion|promoting|promote","被動","has been + p.p. 是現在完成被動，「被升職」。"],
+["All visitors must sign in at the front desk ___ entering the laboratory.","before|during|until|since","介係詞","進實驗室「之前」簽到，before + Ving。"],
+["The quarterly report was ___ thorough that the board approved it without changes.","so|such|too|very","句型","so + 形容詞 + that…，「如此…以致於」。such 後面接名詞。"],
+["Please submit your expense reports ___ Friday at 5 P.M.","by|until|in|at","介係詞","截止期限用 by；until 表示持續到某時。"],
+["Our customer service team ___ responds to inquiries within 24 hours.","typically|typical|typify|typicality","詞性","修飾動詞 responds 要用副詞。"],
+["The conference room on the third floor is currently ___ renovation.","under|over|below|among","介係詞","under renovation 是固定用法，「整修中」。"],
+["Mr. Chen asked his assistant to reschedule the meeting because ___ was traveling.","he|him|his|himself","代名詞","子句主詞位置用主格 he。"],
+["The company's profits increased ___ 15 percent last quarter.","by|at|with|for","介係詞","增加「了」多少幅度用 by。"],
+["Applicants ___ résumés are incomplete will not be considered.","whose|who|whom|which","關係詞","空格後直接接名詞 résumés，表所有格用 whose。"],
+["Neither the manager ___ her assistant was available for comment.","nor|or|and|but","連接詞","neither A nor B 固定搭配。"],
+["The shipment is expected to arrive ___ two to three business days.","within|among|between|along","介係詞","within + 時間，「在…之內」。"],
+["Ms. Park is the ___ qualified of all the candidates.","most|more|much|many","比較級","the ___ of all 是最高級。"],
+["The hotel offers free shuttle service to the airport for all ___ guests.","registered|registering|registers|registration","詞性","修飾 guests，「已登記的」客人用過去分詞。"],
+["If the weather ___ good tomorrow, the outdoor event will proceed as planned.","is|will be|was|being","時態","條件句 if 子句用現在式代替未來。"],
+["The manager suggested ___ the launch date until the testing is complete.","postponing|to postpone|postpone|postponed","動名詞","suggest + Ving。"],
+["We are pleased to announce that our new branch ___ next month.","will open|opened|has opened|opening","時態","next month 是未來時間。"],
+["Employees are reminded to turn off all equipment at the end of ___ shift.","their|them|they|theirs","代名詞","名詞 shift 前用所有格 their。"],
+["The budget proposal must be approved by the finance department ___ it can be implemented.","before|unless|although|whereas","連接詞","先核准「之後才能」執行，用 before。"],
+["Despite the heavy rain, attendance at the trade fair was ___ high.","surprisingly|surprising|surprise|surprised","詞性","修飾形容詞 high 要用副詞。"],
+["Tickets for the concert can be purchased online ___ at the box office.","or|nor|so|yet","連接詞","兩個購票管道二選一用 or。"],
+["The CEO will deliver a speech ___ the company's 50th anniversary celebration.","at|on|to|by","介係詞","在某場活動上用 at。"],
+["Please refer to the attached document for ___ information about the project.","additional|addition|additionally|add","詞性","修飾名詞 information 要用形容詞。"],
+["The marketing team has ___ completed the first phase of the campaign.","already|yet|still|ever","副詞","肯定句的現在完成式表「已經」用 already；yet 用於否定或疑問。"],
+["Ms. Wong prefers to handle client complaints ___ rather than delegating them.","herself|she|her|hers","代名詞","強調「親自」處理用反身代名詞。"],
+["The factory has reduced its energy consumption ___ installing solar panels.","by|for|with|from","介係詞","by + Ving 表「藉由…方式」。"],
+["Only employees with security clearance are ___ to enter the server room.","permitted|permission|permitting|permit","被動","be permitted to V，「被允許」。"],
+["The new policy will take ___ on January 1.","effect|affect|effective|effectively","字彙","take effect 是固定用法，「生效」。"],
+["The seminar has been rescheduled ___ low registration numbers.","due to|because|although|so that","介係詞","空格後是名詞片語，用介係詞 due to；because 後要接子句。"],
+["We need to hire someone ___ can speak both English and Japanese.","who|whom|whose|which","關係詞","先行詞是人，關代在子句當主詞用 who。"],
+["The contract will expire at the end of the month ___ it is renewed.","unless|if|because|once","連接詞","「除非」續約，否則到期。"],
+["Sales of the new model have exceeded ___ expectations.","all|every|each|much","限定詞","複數名詞 expectations 前用 all；every、each 接單數。"],
+["The report needs to be ___ before it is sent to the client.","revised|revising|revise|revision","被動","to be + p.p.，報告「被修改」。"],
+["Mr. Tanaka has worked for the firm ___ 2015.","since|for|from|during","介係詞","現在完成式 + 時間起點用 since。"],
+["The restaurant is known for its ___ service and reasonable prices.","attentive|attention|attend|attentively","詞性","修飾名詞 service 要用形容詞。"],
+["Participants should bring a photo ID ___ proof of registration.","as well as|as long as|as soon as|as far as","連接詞","as well as 表「以及」，連接兩個名詞。"],
+["The renovation project was completed ahead of ___.","schedule|scheduled|scheduling|schedules","字彙","ahead of schedule 固定用法，「提前」。"],
+["Customers who wish to return items must present the original ___.","receipt|recipe|reception|recipient","字彙","退貨要出示收據 receipt。"],
+["Our sales figures this year are significantly higher ___ last year's.","than|then|as|from","比較級","比較級 higher + than。"],
+["The director was impressed by the ___ of the proposal.","clarity|clear|clearly|clarify","詞性","the ___ of 中間要名詞。"],
+["Please make sure that all documents are signed ___ submitting them.","before|prior|until|ago","介係詞","prior 要搭配 to；before + Ving 才完整。"],
+["The company is seeking a ___ engineer with at least five years of experience.","qualified|qualify|qualification|qualifying","詞性","修飾 engineer，「有資格的」用 qualified。"],
+["Each of the departments ___ required to submit a budget plan.","is|are|be|being","主詞動詞一致","Each of + 複數名詞，動詞用單數。"],
+["The new branch manager has made several ___ to the workflow.","improvements|improve|improved|improving","詞性","several 後面接複數名詞。"],
+["The client requested that the delivery date ___ moved forward.","be|is|was|will be","假設語氣","request that + 主詞 + (should) 原形動詞。"],
+["Mr. Lopez will be out of the office ___ next Wednesday.","until|by|since|within","介係詞","不在辦公室的狀態持續「直到」下週三。"],
+["Our online store allows customers to track ___ orders in real time.","their|there|they're|them","代名詞","名詞 orders 前用所有格 their。"],
+["The board of directors ___ the merger proposal at yesterday's meeting.","approved|approves|will approve|approving","時態","yesterday 用過去式。"],
+["The museum is open to the public every day ___ Mondays.","except|besides|without|beyond","介係詞","「除了週一以外」都開，用 except。besides 是「除此之外還有」。"],
+["Ms. Kim was ___ for her outstanding contribution to the project.","recognized|recognition|recognize|recognizable","被動","was + p.p.，「被表揚」。"],
+["Please contact the IT department ___ you experience any technical problems.","if|unless|whether|so","連接詞","「如果」遇到問題就聯絡。"],
+["The new office building is ___ located near the subway station.","conveniently|convenient|convenience|convene","詞性","修飾過去分詞 located 用副詞。"],
+["The proposal was rejected because it was not cost-___.","effective|effect|effectively|efficiency","字彙","cost-effective，「划算的」。"],
+["Staff members are encouraged ___ in the annual health checkup.","to participate|participating|participate|participated","不定詞","be encouraged to V。"],
+["This product comes with a two-year ___ against manufacturing defects.","warranty|voucher|invoice|refund","字彙","保固用 warranty。"],
+["The CEO has decided to ___ the company's headquarters to Singapore.","relocate|relocation|relocating|relocated","詞性","decide to + 原形動詞。"],
+["The survey results will be shared with all employees ___ they have been analyzed.","once|unless|whereas|despite","連接詞","once 表「一旦…就」。"],
+["Ms. Hsu reviewed the contract ___ before signing it.","carefully|careful|care|carefulness","詞性","修飾動詞 reviewed 用副詞。"],
+["Please be ___ that the parking lot will be closed for repairs this weekend.","advised|advice|advising|advisory","被動","Please be advised that… 是公告常見句型。"],
+["The marketing director, ___ joined the company last year, has already doubled online sales.","who|which|whom|whose","關係詞","先行詞是人、在子句當主詞，用 who。"],
+["The supplier offered a 10 percent discount on orders ___ 500 units.","exceeding|exceeded|exceed|excess","分詞","orders exceeding…，「超過…的訂單」，主動用現在分詞。"],
+["The workshop is designed for beginners, so no prior experience is ___.","necessary|necessity|necessarily|necessitate","詞性","be 動詞後接形容詞。"],
+["The deadline for the project has been ___ by one week.","extended|extension|extensive|extend","被動","has been + p.p.，期限「被延長」。"],
+["Not only did the team finish early, ___ they also stayed under budget.","but|and|or|so","連接詞","not only… but (also)… 固定搭配。"],
+["We apologize ___ any inconvenience this delay may cause.","for|of|with|by","介係詞","apologize for + 事情。"],
+["The training manual should be read ___ before using the machine.","thoroughly|thorough|thoroughness|through","詞性","修飾動詞 read 用副詞。"],
+["Interns will be assigned to different departments ___ to their interests.","according|accordance|accord|accordingly","字彙","according to，「根據」。"],
+["The hotel's conference facilities can accommodate ___ 300 people.","up to|as of|in case|so far","片語","up to + 數字，「最多」。"],
+["Mr. Davis will ___ the presentation in place of the director.","deliver|deliverance|delivery|delivering","詞性","will + 原形動詞。deliver a presentation 是常見搭配。"],
+["The city council is considering a proposal ___ public transportation.","to improve|improve|improved|improvement","不定詞","a proposal to V，「一項…的提案」。"],
+["The latest model is lighter and ___ than its predecessor.","faster|fastest|more fast|fast","比較級","與 lighter 並列，後有 than，用比較級 faster。"],
+["All employees must complete the safety training ___ the end of the month.","by|until|since|during","介係詞","完成某事的期限用 by。"],
+["The CEO's speech was well ___ by the audience.","received|receipt|receiving|receptive","被動","be well received，「廣受好評」。"],
+["Mr. Huang could not attend the meeting, ___ he sent his deputy.","so|because|although|unless","連接詞","無法出席「所以」派代理人。"],
+["Our firm specializes ___ commercial real estate.","in|on|at|for","介係詞","specialize in，「專精於」。"],
+["The software update is ___ for all users and will be installed automatically.","mandatory|voluntary|temporary|partial","字彙","會自動安裝，代表是「強制的」。"],
+["The new employee orientation will take place in Room 204, ___ is on the second floor.","which|who|where|what","關係詞","逗號後補充說明 Room 204，在子句當主詞用 which。"],
+["Ms. Ito was asked to ___ the new interns during their first week.","supervise|supervision|supervisor|supervisory","詞性","to + 原形動詞。"],
+["The store will remain open ___ the renovation.","during|while|when|since","介係詞","空格後是名詞，用介係詞 during；while 後接子句。"],
+["Please keep your receipt ___ you need to exchange the item.","in case|even if|as though|rather than","連接詞","in case，「以防萬一」。"],
+["The new hires will receive ___ training before they start working with clients.","extensive|extend|extension|extensively","詞性","修飾名詞 training 用形容詞。"],
+["Mr. Wang is responsible ___ coordinating the annual sales conference.","for|to|of|with","介係詞","be responsible for，「負責」。"],
+["The package was sent ___ express mail to ensure it arrives on time.","by|in|on|at","介係詞","by + 運送方式。"],
+["___ the project was difficult, the team completed it on schedule.","Although|Despite|Because|However","連接詞","空格後是完整子句且語意轉折，用 Although；Despite 後接名詞。"],
+["Customers can choose ___ standard and express delivery.","between|among|either|both","介係詞","between A and B。"],
+["The hiring committee will ___ all applications next week.","review|reviewer|reviewing|reviewed","詞性","will + 原形動詞。"],
+["Ms. Lee has been working on the report ___ early this morning.","since|for|from|by","介係詞","現在完成進行式 + 起點時間用 since。"],
+["Our new printer is ___ faster than the old one.","considerably|considerable|consider|consideration","詞性","修飾比較級 faster 用副詞。"],
+["The client was dissatisfied with the ___ of the final product.","quality|qualify|qualified|qualitative","詞性","the ___ of 中間要名詞。"],
+["Anyone ___ in volunteering for the charity event should contact Ms. Ho.","interested|interesting|interest|interestingly","分詞","人「感到有興趣的」用過去分詞 interested。"],
+["The manager will announce the results ___ the meeting is over.","as soon as|as well as|so as to|in order to","連接詞","as soon as + 子句，「一…就」。"],
+["Production was temporarily ___ due to a power outage.","suspended|suspend|suspension|suspending","被動","was + p.p.，生產「被暫停」。"],
+["Please read the instructions ___ before assembling the furniture.","carefully|careful|caring|cares","詞性","修飾動詞 read 用副詞。"],
+["The event was a great success, thanks ___ the hard work of our volunteers.","to|for|with|of","介係詞","thanks to，「多虧了」。"],
+["Mr. Brown is ___ to retire at the end of this year.","scheduled|schedule|scheduling|schedules","被動","be scheduled to V，「預定要」。"],
+["The new advertising campaign has attracted a large number of ___.","customers|customer|customize|custom","名詞單複數","a large number of + 複數名詞。"],
+["Each team member is expected to contribute ideas ___ the brainstorming session.","during|while|meanwhile|whereas","介係詞","空格後是名詞片語，用 during。"],
+["The financial results were ___ than analysts had predicted.","better|best|good|well","比較級","後有 than，用比較級 better。"],
+["Employees ___ wish to attend the seminar must register by Friday.","who|whom|which|whose","關係詞","先行詞是人、在子句當主詞，用 who。"],
+["The company plans to expand ___ operations into Southeast Asia.","its|it's|it|itself","代名詞","名詞 operations 前用所有格 its。it's = it is。"],
+["Ms. Tsai will be in charge of the project ___ Mr. Liu is on leave.","while|during|despite|unless","連接詞","空格後是完整子句，用 while。"],
+["The device is easy to use and requires ___ maintenance.","minimal|minimize|minimally|minimization","詞性","修飾名詞 maintenance 用形容詞 minimal。"],
+["The deadline is approaching, so we must work ___ to finish on time.","efficiently|efficient|efficiency|efficiencies","詞性","修飾動詞 work 用副詞。"],
+["The store manager ___ the staff for their excellent performance last month.","praised|praises|will praise|praising","時態","last month 用過去式。"]
+],
+p7: [
+{t:"Email",title:"Office relocation",text:"To: All Staff\nFrom: Grace Liu, Facilities Manager\nDate: March 3\nSubject: Office relocation\n\nDear colleagues,\n\nAs announced last month, our Taipei office will move to the Xinyi Tower on March 28. The move will take place over the weekend so that business is not interrupted. Please pack the items on your desk into the boxes provided by Wednesday, March 25. Label each box with your name and new desk number, which you will receive from your department head next week.\n\nThe IT team will disconnect all computers on Friday afternoon at 3 P.M. Please save your work and log off before then. Equipment will be set up at the new location by Monday morning.\n\nIf you have any questions, contact me at extension 214.\n\nGrace",
+q:[["What is the purpose of the e-mail?","To give instructions about an office move|To announce a new IT policy|To introduce a new facilities manager|To request volunteers for a weekend event","第一句就說辦公室要搬家，後面都是搬家的指示。"],
+["By when should employees pack their belongings?","March 25|March 28|Next week|Friday at 3 P.M.","by Wednesday, March 25。"],
+["Where will employees get their new desk numbers?","From their department heads|From Grace Liu|From the IT team|From the labels on the boxes","which you will receive from your department head。"],
+["What is suggested about the move?","It is scheduled to minimize disruption to business|It has been postponed|It will take a full week|Employees must work on Saturday","over the weekend so that business is not interrupted。"]]},
+{t:"Advertisement",title:"Brightline Fitness",text:"Brightline Fitness — Now Open in Zhongshan!\n\nCelebrate our grand opening with a special offer. Sign up for a one-year membership before April 30 and get your first two months free. All members enjoy unlimited access to our gym, swimming pool, and group classes, including yoga and indoor cycling. Personal training sessions are available at an additional cost.\n\nOur facility is open from 6 A.M. to 11 P.M. on weekdays and 8 A.M. to 9 P.M. on weekends. Free parking is available in the building's basement for members.\n\nVisit www.brightlinefit.tw or stop by our front desk to register.",
+q:[["What is being advertised?","A new fitness center|A swimming competition|A parking service|A yoga instructor course","Now Open + 會員方案，是新開的健身中心。"],
+["What do new members get if they register before April 30?","Two months free|Free personal training|A discount on parking|A free yoga mat","get your first two months free。"],
+["What is NOT included in the membership?","Personal training sessions|Use of the pool|Group classes|Parking","Personal training 要 additional cost，另外收費。"],
+["When does the facility close on Saturdays?","9 P.M.|11 P.M.|8 P.M.|6 P.M.","週末 8 A.M. to 9 P.M.。"]]},
+{t:"Text messages",title:"Client pickup",text:"Kevin Ho (10:12 A.M.)\nHi Mia, the client from Osaka just called. Their flight lands at 2 P.M. instead of 4.\n\nMia Chang (10:14 A.M.)\nThat's earlier than planned. I was going to pick them up after my 1 o'clock meeting.\n\nKevin Ho (10:15 A.M.)\nCan someone else go?\n\nMia Chang (10:17 A.M.)\nI'll ask Daniel. He's free this afternoon.\n\nKevin Ho (10:18 A.M.)\nGreat. Also, the dinner reservation is still at 7, right?\n\nMia Chang (10:19 A.M.)\nYes. I'll send Daniel the details now.",
+q:[["What problem does Mr. Ho mention?","The clients are arriving earlier than expected|A flight has been canceled|A meeting has been moved|The restaurant is fully booked","lands at 2 P.M. instead of 4。"],
+["At 10:17 A.M., what does Ms. Chang most likely mean when she writes, \"I'll ask Daniel\"?","She may have someone else pick up the clients|She will reschedule her meeting|She needs Daniel's flight information|She wants Daniel to make a reservation","回應 Can someone else go?，要請 Daniel 去接機。意圖題要看前一句。"],
+["What will most likely happen at 7 P.M.?","A dinner with the clients|A flight will land|A meeting will start|Daniel will leave the office","the dinner reservation is still at 7。"]]},
+{t:"Notice",title:"Water shutoff",text:"Notice to Residents of Riverside Apartments\n\nWater service to Buildings A and B will be shut off on Tuesday, June 9, from 9 A.M. to 3 P.M. while workers replace old pipes. Building C will not be affected. We recommend that residents store enough water for the day in advance.\n\nThe management office will provide bottled water in the lobby of each affected building. We apologize for the inconvenience and thank you for your patience. For urgent matters, please call 02-2345-6789.",
+q:[["Why will the water be shut off?","To replace pipes|To clean water tanks|To repair the lobby|To install new meters","while workers replace old pipes。"],
+["Who will NOT be affected?","Residents of Building C|Residents of Building A|Workers in the lobby|The management office","Building C will not be affected。"],
+["What will the management office do?","Provide bottled water|Extend the shutoff period|Send workers to each apartment|Offer a discount on rent","will provide bottled water in the lobby。"]]},
+{t:"Article",title:"Local bakery expands",text:"Local Bakery Expands Overseas\n\nTAICHUNG — Sunrise Bakery, famous for its pineapple cakes, announced on Monday that it will open its first overseas store in Singapore this September. Founded in 1998 by Lee Mei-hua as a small family shop, the bakery now operates twelve locations across Taiwan.\n\n\"Many tourists bring our cakes home as gifts, and we kept receiving requests from customers abroad,\" said Ms. Lee's son, Andrew Lee, who became the company's president in 2020. Under his leadership, the company launched an online store that now accounts for nearly 30 percent of total sales.\n\nThe Singapore store will be located in a busy shopping district and will offer the same products as the Taiwanese locations. The company plans to hire about 15 local staff. If the store succeeds, Sunrise Bakery hopes to enter the Japanese market within three years.",
+q:[["What is the article mainly about?","A company's plan to open a store abroad|The history of pineapple cakes|A new online shopping service|A bakery's change of ownership","標題與第一段：要在新加坡開第一家海外店。"],
+["Who is Andrew Lee?","The current president of Sunrise Bakery|The founder of Sunrise Bakery|A tourist from Singapore|A manager of the Singapore store","became the company's president in 2020。創辦人是他母親。"],
+["What is mentioned about the online store?","It makes up almost a third of sales|It was launched in 1998|It only ships to Singapore|It will close in September","nearly 30 percent of total sales，約三成。換句話說是 Part 7 常見陷阱。"],
+["What does the company hope to do in the future?","Expand into Japan|Open more stores in Taichung|Develop new flavors|Reduce its staff","hopes to enter the Japanese market。"]]},
+{t:"Invoice",title:"Office supplies invoice",text:"Greenway Office Supplies — Invoice #20481\n\nBill to: Harbor Design Co., 5F, No. 88 Minsheng Rd., Taipei\nOrder date: May 12    Delivery date: May 14\n\nItem — Qty — Unit price — Total\nA4 copy paper (box) — 10 — NT$450 — NT$4,500\nBlack ink cartridge — 4 — NT$1,200 — NT$4,800\nDesk organizer — 6 — NT$350 — NT$2,100\n\nSubtotal: NT$11,400\nDelivery: Free (orders over NT$10,000)\nTotal due: NT$11,400\n\nPayment is due within 30 days of delivery. A 2% late fee will be charged on overdue balances.",
+q:[["Which item was ordered in the largest quantity?","Copy paper|Ink cartridges|Desk organizers|Envelopes","copy paper 數量 10，最多。"],
+["Why was delivery free?","The order was over NT$10,000|It was the customer's first order|The items were delivered late|Harbor Design used a coupon","Free (orders over NT$10,000)。"],
+["According to the invoice, when is payment due?","Within 30 days of delivery|On the order date|Upon delivery|Within 2 days of the order","Payment is due within 30 days of delivery。"]]},
+{t:"Job ad + E-mail",title:"Customer support job",text:"[Passage 1]\nPosition: Bilingual Customer Support Specialist — Nova Travel\n\nNova Travel is looking for a customer support specialist to assist travelers by phone and e-mail. Requirements: fluency in English and Mandarin; at least two years of customer service experience; ability to work weekend shifts. Experience in the travel industry is preferred but not required. To apply, send your résumé and a short cover letter to hr@novatravel.tw by July 15.\n\n[Passage 2]\nTo: hr@novatravel.tw\nFrom: Jason Wu\nDate: July 10\nSubject: Customer Support Specialist\n\nDear Hiring Manager,\n\nI am writing to apply for the customer support position advertised on your Web site. I have worked for three years at the front desk of a hotel in Kaohsiung, where I handled guest requests in both English and Mandarin. Although I have not worked at a travel agency, I am familiar with booking systems and enjoy helping travelers.\n\nI am available to work any day of the week. My résumé is attached.\n\nSincerely,\nJason Wu",
+q:[["What is NOT a requirement for the position?","Experience in the travel industry|Fluency in two languages|Customer service experience|Weekend availability","preferred but not required，加分但非必要。"],
+["What is indicated about Mr. Wu?","He meets the experience requirement|He currently works for Nova Travel|He lives in Taipei|He missed the application deadline","雙篇整合題：要求兩年，他有三年。7/10 寄出也沒超過 7/15。"],
+["How did Mr. Wu learn about the job?","On a Web site|From a friend|At a hotel|In a newspaper","advertised on your Web site。"],
+["In the e-mail, the word \"handled\" in paragraph 1, line 2, is closest in meaning to","dealt with|carried|touched|sold","handle requests = 處理請求 = deal with。"]]},
+{t:"Memo",title:"Quarterly sales meeting",text:"MEMO\nTo: Sales Team\nFrom: Robert Chiu, Sales Director\nRe: Quarterly meeting\n\nOur quarterly sales meeting has been moved from Thursday to Friday, October 23, because several team members will be attending a trade show in Taichung on Thursday. The meeting will start at 10 A.M. in Conference Room B. Please bring your sales figures for the third quarter and at least one idea for improving customer retention. Lunch will be provided after the meeting.",
+q:[["Why was the meeting moved?","Some staff will be at a trade show|The conference room was unavailable|The director is on vacation|The sales figures are not ready","several team members will be attending a trade show。"],
+["What are attendees asked to bring?","Sales figures and an idea|Their own lunch|Trade show tickets|A customer list","sales figures + at least one idea。"],
+["What will happen after the meeting?","Lunch will be served|A trade show will begin|Employees will travel to Taichung|A new director will be introduced","Lunch will be provided after the meeting。"]]},
+{t:"Online review",title:"Wireless earbuds review",text:"Customer review — Lumo Wireless Earbuds ★★★★☆\n\nI bought these earbuds for my daily commute. The sound quality is excellent for the price, and the battery easily lasts my entire 90-minute round trip. The noise cancellation works well on the MRT, though it struggles a little in very windy conditions. My only real complaint is the charging case, which feels cheap and opened in my bag twice. The customer service team, however, sent me a replacement case within three days at no cost. Overall, I would recommend them.\n\n— Posted by Amy T.",
+q:[["Why did the reviewer buy the earbuds?","To use while commuting|To exercise outdoors|As a gift|For work calls","for my daily commute。"],
+["What problem does the reviewer mention?","The charging case is poorly made|The battery runs out quickly|The sound quality is poor|The earbuds were expensive","charging case feels cheap and opened in my bag。"],
+["What is suggested about the customer service team?","It responded quickly|It charged for repairs|It was hard to contact|It refused a replacement","within three days at no cost。"]]},
+{t:"Web page",title:"Library card renewal",text:"Taipei Central Library — Membership Renewal\n\nLibrary cards are valid for three years. You will receive an e-mail reminder 30 days before your card expires. Cards can be renewed online, at any branch, or through our mobile app. To renew online, log in to your account and select \"Renew Card.\" You will need to confirm your current address.\n\nPlease note that cards cannot be renewed if you have overdue items or unpaid fees of more than NT$100. Expired cards can still be used to return books but not to borrow new ones.\n\nFor help, visit the information desk on the first floor of any branch.",
+q:[["How long is a library card valid?","Three years|One year|30 days|Until it is renewed online","valid for three years。"],
+["What is required to renew a card online?","Confirming a current address|Visiting the first floor|Paying a renewal fee|Downloading a new app","You will need to confirm your current address。"],
+["What can a member with an expired card do?","Return books|Borrow new books|Renew with overdue items|Reserve study rooms","can still be used to return books。"],
+["What would prevent a member from renewing?","Having unpaid fees over NT$100|Living outside Taipei|Renewing through the app|Receiving an e-mail reminder","cannot be renewed if... unpaid fees of more than NT$100。"]]}
+],
+vocab: "accommodate|容納；提供住宿;agenda|議程;allocate|分配;amendment|修正案;anticipate|預期;applicant|申請人;appointment|約會；任命;approximately|大約;assess|評估;asset|資產;attendee|出席者;audit|稽核;authorize|授權;available|可用的；有空的;beverage|飲料;brochure|小冊子;budget|預算;candidate|候選人;capacity|容量；能力;client|客戶;colleague|同事;commute|通勤;compensation|薪酬；補償;competitive|有競爭力的;comply|遵守;confidential|機密的;confirm|確認;consecutive|連續的;consult|諮詢;contract|合約;coordinate|協調;courier|快遞;credentials|資歷證明;deadline|截止日;defective|有瑕疵的;delegate|委派；代表;deposit|訂金；存款;designate|指定;dispatch|發送;distribute|分發;draft|草稿;eligible|有資格的;enclose|隨函附上;endorse|背書；支持;enhance|提升;enroll|註冊;estimate|估計；估價單;evaluate|評估;exceed|超過;expand|擴張;expenditure|支出;expertise|專業知識;expire|到期;facilitate|促進;feasible|可行的;fiscal|財政的;forward|轉寄;fragile|易碎的;headquarters|總部;implement|實施;incentive|獎勵;inquiry|詢問;installment|分期付款;inventory|庫存;invoice|發票；請款單;itinerary|行程表;lease|租約;liability|責任；負債;logistics|物流;maintenance|維護;mandatory|強制的;merchandise|商品;merger|合併;negotiate|談判;notify|通知;objective|目標;obligation|義務;occupancy|入住率;outstanding|傑出的；未付清的;overdue|逾期的;oversee|監督;patron|顧客；贊助人;payroll|薪資名冊;periodical|期刊;personnel|人員；人事;preliminary|初步的;premises|場所；建築物;procedure|程序;proceeds|收益;procure|採購;projection|預測;promote|升遷；促銷;proposal|提案;prospective|潛在的；未來的;quarterly|每季的;quota|配額;quote|報價;reimburse|核銷；退款;relocate|遷移;remit|匯款;renovation|整修;representative|代表；業務員;requirement|要求；必要條件;reservation|預約;retail|零售;revenue|營收;revise|修改;shipment|貨運;stakeholder|利害關係人;subsidiary|子公司;subscription|訂閱;supervisor|主管;supplement|補充;surplus|盈餘；過剩;tentative|暫定的;terminate|終止;transaction|交易;tuition|學費;turnover|營業額；人員流動率;unanimous|一致同意的;upcoming|即將到來的;utility|水電等公用事業;vacancy|空缺;vendor|供應商;venue|場地;waive|免除;warranty|保固;withdraw|提款；撤回;workforce|勞動力;yield|產生；收益;adjacent|鄰近的;complimentary|免費贈送的;consolidate|合併；整合;discrepancy|差異；不一致;durable|耐用的;expedite|加快處理;interim|臨時的;lucrative|獲利豐厚的;mediate|調解;outsource|外包;pending|待決的;reconcile|核對；調解;solicit|徵求;streamline|簡化流程;surpass|超越;tenant|房客;verify|核實"
+};
+
+</script>
 <script>
 (function(){
 const WD=['日','一','二','三','四','五','六'];
@@ -255,7 +451,7 @@ function renderToday(){
     <div class="progress"><i style="width:${t.list.length?dn.length/t.list.length*100:0}%"></i></div>
     <div class="tasks">${t.list.map((x,i)=>`<div class="task${dn.includes(i)?' done':''}" data-i="${i}" role="checkbox" tabindex="0" aria-checked="${dn.includes(i)}">
       <span class="bub">${letters[i%4]}</span>
-      <div><div class="tt"><span class="tag ${x.tag}">${{L:'聽力',R:'閱讀',V:'單字',M:'考試'}[x.tag]}</span>${x.t}</div><div class="td">${x.d}</div></div>
+      <div><div class="tt"><span class="tag ${x.tag}">${{L:'聽力',R:'閱讀',V:'單字',M:'考試'}[x.tag]}</span>${x.t}</div><div class="td">${x.d}</div>${goFor(x.t)}</div>
       <span class="min">${x.m?x.m+'′':''}</span></div>`).join('')}</div>
     <div class="note">${PH[p].g}</div>`;
   }
@@ -320,10 +516,161 @@ function renderSet(){
   <button class="btn ghost" id="reset">${confirmReset?'再按一次確認清除所有打勾':'清除所有打勾紀錄'}</button></section>`;
 }
 
+/* ===== 練習 ===== */
+const B=window.BANK||{p5:[],p7:[],vocab:''};
+const VOC=B.vocab.split(';').map(s=>{const[w,m]=s.split('|');return{w,m}});
+let WRONG=store.get('wrong',{p5:[],p7:[]});
+let P5LOG=store.get('p5log',[]);
+let P7DONE=store.get('p7done',{});
+let VLV=store.get('vocab',{});
+let Q=null,timerId=null;
+const LET='ABCD';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const mkOpts=s=>{const o=s.split('|');return shuf(o.map((t,i)=>({t,ok:i===0})))};
+const fmt=s=>{const a=Math.abs(s);return (s<0?'+':'')+Math.floor(a/60)+':'+String(a%60).padStart(2,'0')};
+function goFor(t){
+  if(/Part 5/.test(t))return '<button class="go" data-go="p5">在 APP 裡練習</button>';
+  if(/Part 7/.test(t))return '<button class="go" data-go="p7">在 APP 裡練習</button>';
+  if(t==='單字')return '<button class="go" data-go="vocab">翻單字卡</button>';
+  return '';
+}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null}}
+function startTimer(){
+  stopTimer();
+  timerId=setInterval(()=>{if(!Q||Q.done){stopTimer();return}
+    const el=document.getElementById('tm');if(!el)return;
+    const left=Q.limit-Math.floor((Date.now()-Q.t0)/1000);
+    el.textContent=Q.limit?fmt(left):fmt(Math.floor((Date.now()-Q.t0)/1000));
+    el.classList.toggle('over',Q.limit&&left<0)},1000);
+}
+function startP5(retry){
+  let ids;
+  if(retry)ids=shuf(WRONG.p5).slice(0,30);
+  else{const w=new Set(WRONG.p5);const all=shuf(B.p5.map((_,i)=>i));
+    ids=all.filter(i=>w.has(i)).slice(0,8).concat(all.filter(i=>!w.has(i))).slice(0,30);ids=shuf(ids)}
+  if(!ids.length)return;
+  Q={kind:'p5',retry:!!retry,items:ids.map(i=>({i,opts:mkOpts(B.p5[i][1]),pick:-1})),cur:0,t0:Date.now(),limit:retry?0:Math.round(ids.length*18),done:false};
+  tab='prac';render();startTimer();
+}
+function startP7(pi,onlyWrong){
+  const P=B.p7[pi];let qs=P.q.map((_,k)=>k);
+  if(onlyWrong)qs=qs.filter(k=>WRONG.p7.includes(pi+'-'+k));
+  Q={kind:'p7',pi,items:qs.map(k=>({k,opts:mkOpts(P.q[k][1]),pick:-1})),t0:Date.now(),limit:qs.length*60,done:false};
+  tab='prac';render();startTimer();window.scrollTo(0,0);
+}
+function startVocab(){
+  const sorted=shuf(VOC.map((v,i)=>i)).sort((a,b)=>(VLV[VOC[a].w]||0)-(VLV[VOC[b].w]||0));
+  Q={kind:'vocab',ids:sorted.slice(0,20),cur:0,flip:false,known:0,done:false};
+  tab='prac';render();
+}
+function finish(){
+  Q.done=true;Q.sec=Math.floor((Date.now()-Q.t0)/1000);stopTimer();
+  let c=0;
+  if(Q.kind==='p5'){
+    Q.items.forEach(it=>{const ok=it.pick>=0&&it.opts[it.pick].ok;if(ok)c++;
+      const has=WRONG.p5.includes(it.i);
+      if(!ok&&!has)WRONG.p5.push(it.i);if(ok&&has&&Q.retry)WRONG.p5=WRONG.p5.filter(x=>x!==it.i)});
+    if(!Q.retry){P5LOG.push({d:todayStr,c,n:Q.items.length,s:Q.sec});store.set('p5log',P5LOG)}
+  }else{
+    Q.items.forEach(it=>{const key=Q.pi+'-'+it.k,ok=it.pick>=0&&it.opts[it.pick].ok;if(ok)c++;
+      const has=WRONG.p7.includes(key);if(!ok&&!has)WRONG.p7.push(key);if(ok&&has)WRONG.p7=WRONG.p7.filter(x=>x!==key)});
+    P7DONE[Q.pi]={c,n:Q.items.length,s:Q.sec};store.set('p7done',P7DONE);
+  }
+  Q.c=c;store.set('wrong',WRONG);render();window.scrollTo(0,0);
+}
+function renderPracHome(){
+  const last=P5LOG.slice(-1)[0],p7n=Object.keys(P7DONE).length,known=VOC.filter(v=>(VLV[v.w]||0)>=2).length,wn=WRONG.p5.length+WRONG.p7.length;
+  return `<section>
+  <div class="modes">
+    <button class="mode" data-act="p5"><b>Part 5 限時</b><span>30 題・9 分鐘，題庫 ${B.p5.length} 題</span><span class="big">${last?last.c+'/'+last.n:'—'}</span><span>${last?'上次用時 '+fmt(last.s):'還沒做過'}</span></button>
+    <button class="mode" data-act="p7list"><b>Part 7 閱讀</b><span>每題限時 1 分鐘，${B.p7.length} 篇</span><span class="big">${p7n}/${B.p7.length}</span><span>已完成篇數</span></button>
+    <button class="mode" data-act="vocab"><b>單字卡</b><span>每輪 20 張，不熟的優先</span><span class="big">${known}/${VOC.length}</span><span>已熟記</span></button>
+    <button class="mode" data-act="wrong"><b>錯題本</b><span>答錯的題目自動收進來</span><span class="big">${wn}</span><span>待訂正</span></button>
+  </div>
+  ${P5LOG.length?`<div><div class="eyebrow" style="margin-bottom:6px">Part 5 紀錄</div><div class="slist">${P5LOG.slice(-5).reverse().map(l=>`<div class="srow" style="grid-template-columns:1fr auto auto"><span class="mono">${l.d}</span><span class="mono">${l.c}/${l.n}</span><span class="mono ${l.s<=540?'ok':'bad'}">${fmt(l.s)}</span></div>`).join('')}</div></div>`:''}
+  <div class="note">題目是依多益題型原創的練習題，用來練速度和題型熟悉度。分數請以《神猜解》全真模考為準。</div></section>`;
+}
+function renderP7List(){
+  return `<section><div class="daybar"><button class="navbtn" data-act="home" aria-label="返回">‹</button><h2>Part 7 閱讀</h2><span style="width:40px"></span></div>
+  <div class="rows">${B.p7.map((p,i)=>{const d=P7DONE[i];return `<button class="row" data-p7="${i}" style="grid-template-columns:1fr auto"><span class="s"><b style="font-weight:500">${esc(p.title)}</b><br><small class="muted">${p.t}・${p.q.length} 題・限時 ${p.q.length} 分鐘</small></span><span class="st mono${d&&d.c===d.n?' ok':''}">${d?d.c+'/'+d.n:'未做'}</span></button>`}).join('')}</div></section>`;
+}
+function renderWrong(){
+  const p7=WRONG.p7.map(k=>k.split('-').map(Number));
+  const byP=[...new Set(p7.map(x=>x[0]))];
+  return `<section><div class="daybar"><button class="navbtn" data-act="home" aria-label="返回">‹</button><h2>錯題本</h2><span style="width:40px"></span></div>
+  ${WRONG.p5.length?`<button class="btn" data-act="p5retry">重做 Part 5 錯題（${WRONG.p5.length} 題）</button>`:''}
+  ${byP.length?`<div class="rows">${byP.map(pi=>`<button class="row" data-p7w="${pi}" style="grid-template-columns:1fr auto"><span class="s">${esc(B.p7[pi].title)}</span><span class="st mono bad">${p7.filter(x=>x[0]===pi).length} 題</span></button>`).join('')}</div>`:''}
+  ${!WRONG.p5.length&&!byP.length?'<div class="note">目前沒有錯題。做完練習後，答錯的題目會自動收進這裡，重做答對就會移除。</div>':''}
+  ${WRONG.p5.length?`<div class="slist">${WRONG.p5.map(i=>{const q=B.p5[i];return `<div class="rv"><span class="s">${esc(q[0].replace('___','<u>'+q[1].split('|')[0]+'</u>')).replace(/&lt;(\/?)u&gt;/g,'<$1u>')}</span><span class="exp">${esc(q[2])}｜${esc(q[3])}</span></div>`}).join('')}</div>`:''}
+  </section>`;
+}
+function bar(label){return `<div class="qbar"><button class="navbtn" data-act="quit" aria-label="離開">×</button><span class="muted" style="font-size:13px">${label}</span><span class="timer" id="tm">${Q.limit?fmt(Q.limit-Math.floor((Date.now()-Q.t0)/1000)):fmt(Math.floor((Date.now()-Q.t0)/1000))}</span></div>`}
+function renderP5(){
+  if(Q.done){
+    return `<section><div class="result"><b>${Q.c}/${Q.items.length}</b><span class="muted">用時 <span class="mono ${!Q.limit||Q.sec<=Q.limit?'ok':'bad'}">${fmt(Q.sec)}</span>${Q.limit?'（目標 '+fmt(Q.limit)+'）':''}</span></div>
+    <div class="row2"><button class="btn" data-act="${Q.retry?'p5retry':'p5'}">再做一組</button><button class="btn ghost" data-act="home">回練習首頁</button></div>
+    <div class="slist">${Q.items.map((it,n)=>{const q=B.p5[it.i],ok=it.pick>=0&&it.opts[it.pick].ok,ans=q[1].split('|')[0];
+      return `<div class="rv"><span class="s">${n+1}. ${esc(q[0])}</span><span class="a">${ok?'<span class="ok">✓ '+esc(ans)+'</span>':'<span class="bad">✗ '+(it.pick>=0?esc(it.opts[it.pick].t):'未作答')+'</span>　正解 <b>'+esc(ans)+'</b>'}</span><span class="exp">${esc(q[2])}｜${esc(q[3])}</span></div>`}).join('')}</div></section>`;
+  }
+  const it=Q.items[Q.cur],q=B.p5[it.i];
+  return `<section>${bar((Q.retry?'錯題重做 ':'Part 5 ')+(Q.cur+1)+' / '+Q.items.length)}
+  <div class="progress"><i style="width:${Q.cur/Q.items.length*100}%"></i></div>
+  <div class="qtext">${esc(q[0]).replace('___','<b>_______</b>')}</div>
+  <div class="opts">${it.opts.map((o,k)=>`<button class="opt${it.pick===k?' pick':''}" data-pick="${k}"><span class="bub">${LET[k]}</span><span>${esc(o.t)}</span></button>`).join('')}</div>
+  <div class="row2"><button class="btn ghost" data-act="prev" ${Q.cur?'':'disabled'}>上一題</button>${Q.cur<Q.items.length-1?'<button class="btn ghost" data-act="next">跳過</button>':'<button class="btn" data-act="finish">交卷</button>'}</div></section>`;
+}
+function renderP7(){
+  const P=B.p7[Q.pi];
+  const qs=Q.items.map((it,n)=>{const q=P.q[it.k];
+    return `<div class="qblock"><h4>${n+1}. ${esc(q[0])}</h4><div class="opts">${it.opts.map((o,k)=>{
+      let c='';if(Q.done){if(o.ok)c=' right';else if(it.pick===k)c=' wrong'}else if(it.pick===k)c=' pick';
+      return `<button class="opt${c}" data-pick7="${n}-${k}" ${Q.done?'disabled':''}><span class="bub">${LET[k]}</span><span>${esc(o.t)}</span></button>`}).join('')}</div>${Q.done?`<span class="exp">${esc(q[2])}</span>`:''}</div>`}).join('');
+  return `<section>${Q.done?`<div class="result"><b>${Q.c}/${Q.items.length}</b><span class="muted">用時 <span class="mono ${Q.sec<=Q.limit?'ok':'bad'}">${fmt(Q.sec)}</span>（目標 ${fmt(Q.limit)}）</span></div>`:bar(esc(P.title))}
+  <div class="passage">${esc(P.text)}</div>${qs}
+  ${Q.done?`<div class="row2"><button class="btn" data-act="p7list">下一篇</button><button class="btn ghost" data-act="home">回練習首頁</button></div>`:'<button class="btn" data-act="finish">交卷</button>'}</section>`;
+}
+function renderVocab(){
+  if(Q.cur>=Q.ids.length)return `<section><div class="result"><b>${Q.known}/${Q.ids.length}</b><span class="muted">這輪認識的字</span></div><div class="row2"><button class="btn" data-act="vocab">再一輪</button><button class="btn ghost" data-act="home">回練習首頁</button></div></section>`;
+  const v=VOC[Q.ids[Q.cur]];
+  return `<section><div class="qbar"><button class="navbtn" data-act="quit" aria-label="離開">×</button><span class="muted" style="font-size:13px">單字 ${Q.cur+1} / ${Q.ids.length}</span><span class="mono muted" style="font-size:13px">熟練度 ${VLV[v.w]||0}</span></div>
+  <div class="card" data-act="flip"><span class="w">${esc(v.w)}</span>${Q.flip?`<span class="m">${esc(v.m)}</span>`:'<span class="muted" style="font-size:13px">點一下看中文</span>'}</div>
+  <div class="row2"><button class="btn ghost" data-vk="0">不熟</button><button class="btn" data-vk="1">認識</button></div></section>`;
+}
+function renderPrac(){
+  if(!Q)return pracView==='p7list'?renderP7List():pracView==='wrong'?renderWrong():renderPracHome();
+  return Q.kind==='p5'?renderP5():Q.kind==='p7'?renderP7():renderVocab();
+}
+let pracView='home';
+function pracClick(e){
+  const a=e.target.closest('[data-act]'),go=e.target.closest('[data-go]');
+  if(go){const g=go.dataset.go;g==='p5'?startP5():g==='vocab'?startVocab():(Q=null,pracView='p7list',tab='prac',render());return true}
+  const p7=e.target.closest('[data-p7]');if(p7){startP7(+p7.dataset.p7);return true}
+  const p7w=e.target.closest('[data-p7w]');if(p7w){startP7(+p7w.dataset.p7w,true);return true}
+  const pk=e.target.closest('[data-pick]');if(pk&&Q){const it=Q.items[Q.cur];it.pick=+pk.dataset.pick;
+    if(Q.cur<Q.items.length-1){render();setTimeout(()=>{if(Q&&!Q.done){Q.cur++;render()}},180)}else render();return true}
+  const pk7=e.target.closest('[data-pick7]');if(pk7&&Q){const[n,k]=pk7.dataset.pick7.split('-').map(Number);Q.items[n].pick=k;
+    const y=window.scrollY;render();window.scrollTo(0,y);return true}
+  const vk=e.target.closest('[data-vk]');if(vk&&Q){const v=VOC[Q.ids[Q.cur]].w,ok=vk.dataset.vk==='1';
+    VLV[v]=Math.max(0,Math.min(3,(VLV[v]||0)+(ok?1:-1)));if(ok)Q.known++;store.set('vocab',VLV);Q.cur++;Q.flip=false;render();return true}
+  if(!a)return false;
+  const act=a.dataset.act;
+  if(act==='p5')startP5();
+  else if(act==='p5retry')startP5(true);
+  else if(act==='vocab')startVocab();
+  else if(act==='flip'){Q.flip=!Q.flip;render()}
+  else if(act==='next'){Q.cur++;render()}
+  else if(act==='prev'){Q.cur--;render()}
+  else if(act==='finish')finish();
+  else if(act==='quit'){stopTimer();Q=null;pracView='home';render()}
+  else{stopTimer();Q=null;pracView=act==='p7list'?'p7list':act==='wrong'?'wrong':'home';render();window.scrollTo(0,0)}
+  return true;
+}
+
 function render(){
   header();
   const v=document.getElementById('view');
-  v.innerHTML=tab==='today'?renderToday():tab==='plan'?renderPlan():tab==='score'?renderScore():renderSet();
+  v.innerHTML=tab==='today'?renderToday():tab==='plan'?renderPlan():tab==='score'?renderScore():tab==='prac'?renderPrac():renderSet();
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
 }
 
@@ -334,6 +681,7 @@ function toggle(i){
 
 document.addEventListener('click',e=>{
   const nb=e.target.closest('nav button');if(nb){tab=nb.dataset.tab;confirmReset=false;render();window.scrollTo(0,0);return}
+  if(pracClick(e))return;
   const st=e.target.closest('[data-step]');if(st){sel=ymd(add(pd(sel||defaultSel()),+st.dataset.step));render();return}
   const dd=e.target.closest('[data-d]');if(dd){sel=dd.dataset.d;tab='today';render();window.scrollTo(0,0);return}
   const tk=e.target.closest('.task');if(tk){toggle(+tk.dataset.i);return}
