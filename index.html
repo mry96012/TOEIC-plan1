@@ -341,7 +341,7 @@ vocab: "accommodate|容納；提供住宿;agenda|議程;allocate|分配;amendmen
 <script>
 (function(){
 const WD=['日','一','二','三','四','五','六'];
-const DEF={start:'2026-10-19',exam:'2026-11-29',off:[5,6],workMin:90,offMin:240,target:800};
+const DEF={start:'2026-10-19',exam:'2026-11-29',off:[5,6],workMin:90,offMin:240,target:800,pw:19,po:10};
 const store={get(k,d){try{const v=localStorage.getItem('toeic.'+k);return v?JSON.parse(v):d}catch(e){return d}},
   set(k,v){try{localStorage.setItem('toeic.'+k,JSON.stringify(v))}catch(e){}}};
 let S=Object.assign({},DEF,store.get('settings',{}));
@@ -502,6 +502,26 @@ function renderScore(){
   <p class="muted" style="font-size:13px;margin:0">模考分數用書上附的換算表換成 5–495 分再填。要到 ${S.target}，大約需要聽力 ${Math.min(495,Math.round(S.target/2/5)*5+10)}、閱讀 ${S.target-Math.min(495,Math.round(S.target/2/5)*5+10)}。</p></section>`;
 }
 
+const VAPID='BL2nHqgCqr-NU9CuEKMey_kbUSPpD1hu7KbNnDLoXF3kZHO9ckOAPGQI_94WGpa-J3nvWQ3HMfJx6imzlBORqHs';
+let PUSHCODE=store.get('pushcode','');
+const hrs=v=>Array.from({length:17},(_,i)=>i+6).map(h=>`<option value="${h}"${h==v?' selected':''}>${h}:00</option>`).join('');
+function b64u(s){const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))}
+function pushMsg(t){const el=document.getElementById('pushMsg');if(el)el.textContent=t}
+async function enablePush(){
+  S.pw=+document.getElementById('pw').value;S.po=+document.getElementById('po').value;store.set('settings',S);
+  const standalone=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+  if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){
+    pushMsg(standalone?'這台裝置不支援網頁推播，請確認 iOS 已更新到 16.4 以上。':'請先用 Safari 打開網站，點「分享 → 加入主畫面」，再從主畫面的圖示打開 APP 開啟提醒。');return}
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted'){pushMsg('通知權限沒有開啟。可到 iPhone「設定 → 通知」找到這個 APP 打開。');return}
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID)});
+    PUSHCODE=JSON.stringify({sub:sub.toJSON(),s:{start:S.start,exam:S.exam,off:S.off,workMin:S.workMin,offMin:S.offMin,pw:S.pw,po:S.po}});
+    store.set('pushcode',PUSHCODE);render();pushMsg('通知已開啟。把下面的代碼複製，貼到 GitHub 的 PUSH_SUB，提醒就會開始運作。');
+  }catch(e){pushMsg('開啟失敗：'+(e&&e.message||e))}
+}
 let confirmReset=false;
 function renderSet(){
   return `<section><h2 style="font-size:18px">設定</h2>
@@ -516,6 +536,14 @@ function renderSet(){
     <button class="btn full" type="submit">儲存設定</button>
   </form>
   <p class="muted" style="font-size:13px;margin:0">休假日的模考固定 2 小時，其他項目會依你設定的時間等比例縮放。</p>
+  <h2 style="font-size:18px;padding-top:8px">每日提醒</h2>
+  <div class="sc" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px">
+    <label>上班日提醒時間<select id="pw">${hrs(S.pw)}</select></label>
+    <label>休假日提醒時間<select id="po">${hrs(S.po)}</select></label>
+    <button class="btn full" type="button" id="pushOn">開啟每日提醒</button>
+    <div class="full muted" id="pushMsg" style="font-size:13px">每天在設定的時間推播當天的讀書任務。需要 iOS 16.4 以上，並從主畫面的 APP 圖示打開。</div>
+    ${PUSHCODE?`<label class="full">提醒代碼（貼到 GitHub 的 PUSH_SUB）<textarea id="pushCode" readonly rows="4" style="font:12px var(--mono);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px;width:100%;resize:vertical">${esc(PUSHCODE)}</textarea></label><button class="btn ghost full" type="button" id="copyCode">複製代碼</button>`:''}
+  </div>
   <button class="btn ghost" id="reset">${confirmReset?'再按一次確認清除所有打勾':'清除所有打勾紀錄'}</button></section>`;
 }
 
@@ -690,6 +718,8 @@ document.addEventListener('click',e=>{
   const tk=e.target.closest('.task');if(tk){toggle(+tk.dataset.i);return}
   const dl=e.target.closest('[data-del]');if(dl){SCORES=SCORES.filter(s=>s.id!=dl.dataset.del);store.set('scores',SCORES);render();return}
   const of=e.target.closest('[data-off]');if(of){const i=+of.dataset.off;S.off=S.off.includes(i)?S.off.filter(x=>x!==i):S.off.concat(i);of.classList.toggle('on');return}
+  if(e.target.id==='pushOn'){enablePush();return}
+  if(e.target.id==='copyCode'){const ta=document.getElementById('pushCode');try{navigator.clipboard.writeText(PUSHCODE).then(()=>{e.target.textContent='已複製'},()=>{ta.select()})}catch(err){ta.select()}return}
   if(e.target.id==='reset'){if(confirmReset){DONE={};store.set('done',DONE);confirmReset=false}else confirmReset=true;render()}
 });
 document.addEventListener('keydown',e=>{const tk=e.target.closest&&e.target.closest('.task');if(tk&&(e.key===' '||e.key==='Enter')){e.preventDefault();toggle(+tk.dataset.i)}});

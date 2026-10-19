@@ -1,0 +1,26 @@
+name: 每日讀書提醒
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '立刻送一則測試通知'
+        type: boolean
+        default: true
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Taipei
+      VAPID_PUBLIC: BL2nHqgCqr-NU9CuEKMey_kbUSPpD1hu7KbNnDLoXF3kZHO9ckOAPGQI_94WGpa-J3nvWQ3HMfJx6imzlBORqHs
+      VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
+      PUSH_SUB: ${{ secrets.PUSH_SUB }}
+      FORCE: ${{ inputs.force }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install web-push@3.6.7 --no-save --silent
+      - run: node push.js
