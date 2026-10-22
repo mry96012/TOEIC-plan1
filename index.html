@@ -33,9 +33,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
 .wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px calc(88px + env(safe-area-inset-bottom,0px))}
 h1,h2,h3{margin:0;text-wrap:balance}
+p,.td,.exp,.note,.qtext{text-wrap:pretty}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 .muted{color:var(--muted)}
-.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:500}
+.eyebrow{font-size:12px;color:var(--muted);font-weight:500}
 
 /* header */
 .top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
@@ -51,8 +53,8 @@ section{display:flex;flex-direction:column;gap:12px;padding-top:18px}
 /* day nav */
 .daybar{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .daybar h2{font-size:20px}
-.navbtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;cursor:pointer}
-.navbtn:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.navbtn{width:44px;height:44px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;cursor:pointer}
+.navbtn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 .wd{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;border-radius:10px;border:1px solid transparent;background:none;color:var(--ink);cursor:pointer;font:inherit}
 .wd small{font-size:11px;color:var(--muted)}
@@ -67,14 +69,19 @@ section{display:flex;flex-direction:column;gap:12px;padding-top:18px}
 /* tasks */
 .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
 .tasks{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:14px;border-top:1px solid var(--line);cursor:pointer;user-select:none}
+.tasks{margin:0;padding:0;list-style:none}
+.task{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.tbtn{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;width:100%;min-height:56px;padding:14px;text-align:left;font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-user-select:none;user-select:none}
+.tbtn:active{background:var(--accent-soft)}
+.tbody{display:flex;flex-direction:column;gap:2px;min-width:0}
+.task .go{align-self:flex-start;margin:-6px 0 12px 52px}
 .task:first-child{border-top:0}
 .bub{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--muted);display:grid;place-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:1px;transition:background .15s}
 .task.done .bub{background:var(--pencil);border-color:var(--pencil);color:transparent}
 .task.done .tt{text-decoration:line-through;color:var(--muted)}
 .tt{font-weight:500;min-width:0}
-.td{font-size:13px;color:var(--muted);margin-top:2px}
-.tag{font-size:11px;font-weight:700;letter-spacing:.06em;margin-right:6px}
+.td{font-size:13px;color:var(--muted)}
+.tag{font-size:12px;font-weight:700;margin-right:6px}
 .tag.L{color:var(--L)}.tag.R{color:var(--R)}.tag.V{color:var(--V)}.tag.M{color:var(--M)}
 .min{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
 .note{font-size:13px;color:var(--muted);padding:12px 14px;border-left:3px solid var(--accent);background:var(--card);border-radius:0 10px 10px 0}
@@ -98,7 +105,9 @@ section{display:flex;flex-direction:column;gap:12px;padding-top:18px}
 /* scores */
 form.sc{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
 label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
-input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;min-width:0}
+input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;min-width:0;min-height:44px}
+input[aria-invalid="true"]{border-color:var(--M)}
+.err{grid-column:1/-1;margin:0;font-size:13px;color:var(--M)}
 .full{grid-column:1/-1}
 .btn{font:inherit;font-weight:500;border:0;border-radius:10px;padding:11px 14px;background:var(--accent);color:var(--card);cursor:pointer}
 .btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
@@ -107,11 +116,13 @@ input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--paper
 .slist{display:flex;flex-direction:column}
 .srow{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line);font-size:14px}
 .srow .tot{font-family:var(--mono);font-weight:600}
-.del{background:none;border:0;color:var(--muted);font-size:18px;cursor:pointer;padding:0 4px}
+.tot-wrap{display:inline-flex;align-items:center;gap:6px}
+.del{position:relative;display:inline-grid;place-items:center;min-width:44px;min-height:44px;margin:-10px -10px -10px 0;background:none;border:0;color:var(--muted);font:inherit;font-size:20px;cursor:pointer}
+.del.ask{min-width:auto;font-size:13px;font-weight:500;color:var(--M);padding:0 10px}
 
 /* settings */
 .days7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.days7 button{font:inherit;padding:8px 0;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.days7 button{font:inherit;min-height:44px;padding:8px 0;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
 .days7 button.on{background:var(--accent);border-color:var(--accent);color:var(--card)}
 
 /* bottom nav */
@@ -153,14 +164,32 @@ nav button.on{color:var(--accent)}
 .card .w{font-size:30px;font-weight:600;font-family:Georgia,serif;word-break:break-word}
 .card .m{font-size:18px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.go{font:inherit;font-size:12px;font-weight:500;color:var(--accent);background:none;border:1px solid var(--accent);border-radius:999px;padding:2px 10px;margin-top:6px;cursor:pointer}
+.go{position:relative;font:inherit;font-size:13px;font-weight:500;color:var(--accent);background:var(--card);border:1px solid var(--accent);border-radius:999px;padding:6px 14px;min-height:32px;cursor:pointer}
+.go::after,.del::after{content:"";position:absolute;inset:-8px -4px}
 .plist{display:flex;flex-direction:column}
+/* listening */
+.play{display:flex;align-items:center;justify-content:center;gap:10px;font:inherit;font-size:17px;font-weight:600;min-height:64px;border-radius:16px;border:0;background:var(--accent);color:var(--card);cursor:pointer;flex-wrap:wrap;padding:10px 16px}
+.play svg{width:26px;height:26px;fill:currentColor}
+.play.playing{background:var(--ink)}
+.play .i-stop,.play.playing .i-play{display:none}
+.play.playing .i-stop{display:block}
+.play .cnt{width:100%;text-align:center;font-size:12px;font-weight:400;opacity:.85}
+.abc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.opt.big{justify-content:center;display:flex;min-height:64px;padding:0}
+.opt.big .bub{width:36px;height:36px;font-size:16px}
+.opt:disabled{cursor:default;opacity:1;color:var(--ink)}
+.script{display:flex;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.script .en{margin:0;font-family:Georgia,"Noto Serif TC",serif;font-size:15px;line-height:1.6}
+.script .who{display:inline-block;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-right:8px;vertical-align:2px}
+.rate{flex-direction:row;align-items:center;gap:6px;font-size:12px}
+.rate select{font-size:15px;padding:6px 8px;width:auto;min-height:44px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 </head><body>
 <div class="wrap">
   <header class="top">
+    <h1 class="sr">多益衝刺計畫</h1>
     <div>
       <div class="eyebrow">距離 <span id="examLbl"></span> 多益</div>
       <div class="count"><b id="cd">0</b><span>天</span></div>
@@ -170,12 +199,12 @@ nav button.on{color:var(--accent)}
   <main id="view"></main>
 </div>
 
-<nav><div class="in">
-  <button data-tab="today" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>今天</button>
-  <button data-tab="plan"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>計畫</button>
-  <button data-tab="prac"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>練習</button>
-  <button data-tab="score"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 15l4-4 3 3 5-6"/></svg>成績</button>
-  <button data-tab="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>設定</button>
+<nav aria-label="主要分頁"><div class="in">
+  <button type="button" data-tab="today" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>今天</button>
+  <button type="button" data-tab="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>計畫</button>
+  <button type="button" data-tab="prac"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>練習</button>
+  <button type="button" data-tab="score"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M6 15l4-4 3 3 5-6"/></svg>成績</button>
+  <button type="button" data-tab="set"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>設定</button>
 </div></nav>
 
 <script>
@@ -285,7 +314,60 @@ p5: [
 ["Ms. Tsai will be in charge of the project ___ Mr. Liu is on leave.","while|during|despite|unless","連接詞","空格後是完整子句，用 while。"],
 ["The device is easy to use and requires ___ maintenance.","minimal|minimize|minimally|minimization","詞性","修飾名詞 maintenance 用形容詞 minimal。"],
 ["The deadline is approaching, so we must work ___ to finish on time.","efficiently|efficient|efficiency|efficiencies","詞性","修飾動詞 work 用副詞。"],
-["The store manager ___ the staff for their excellent performance last month.","praised|praises|will praise|praising","時態","last month 用過去式。"]
+["The store manager ___ the staff for their excellent performance last month.","praised|praises|will praise|praising","時態","last month 用過去式。"],
+["By the time the new manager arrives next month, the team ___ the project.", "will have completed|has completed|completed|will complete", "時態", "by the time + 未來的時間點，表示「到那時已經完成」，用未來完成式 will have p.p.。"],
+["Mr. Ho ___ for the company since it was founded in 2010.", "has worked|worked|works|is working", "時態", "since + 過去時間點，動作持續到現在，用現在完成式。"],
+["The marketing team ___ a meeting when the fire alarm went off.", "was holding|is holding|holds|has held", "時態", "過去某動作（警報響）發生時正在進行的事，用過去進行式。"],
+["Ms. Chen ___ the report yesterday afternoon.", "submitted|submits|has submitted|will submit", "時態", "yesterday 是明確的過去時間，用過去式；現在完成式不能接明確過去時間。"],
+["Our sales ___ steadily over the past three years.", "have increased|increased|increase|will increase", "時態", "over the past three years 表示從過去持續到現在，用現在完成式。"],
+["The shuttle bus to the airport ___ every 30 minutes.", "departs|departed|is departed|departing", "時態", "every 30 minutes 是固定班次、規律的事，用現在簡單式。"],
+["The board ___ the proposal at next Monday's meeting.", "will discuss|discussed|has discussed|discussing", "時態", "next Monday 是未來時間，用未來式。"],
+["Before joining our firm, Mr. Park ___ as an accountant for ten years.", "had worked|has worked|works|will be working", "時態", "加入公司（過去）之前已經做了十年，用過去完成式 had p.p.。"],
+["As soon as the shipment ___, we will notify you by e-mail.", "arrives|will arrive|arrived|arriving", "時態", "時間副詞子句（as soon as、when、before）用現在式代替未來式。"],
+["Ms. Lin is not available right now because she ___ with a client.", "is meeting|meets|met|has met", "時態", "right now 表示此刻正在進行，用現在進行式。"],
+["The company ___ its new headquarters last year.", "opened|has opened|opens|will open", "時態", "last year 是明確的過去時間，用過去式。"],
+["Currently, the IT department ___ the company's security system.", "is upgrading|upgraded|has been upgraded|upgrade", "時態", "currently 表示目前正在進行；部門是執行者，用主動的現在進行式。"],
+["When Mr. Wu ___ his presentation, he will answer questions from the audience.", "finishes|will finish|finished|finishing", "時態", "when 引導的時間子句用現在式代替未來式。"],
+["The conference ___ in Kaohsiung every year since 2018.", "has been held|is held|was held|will be held", "時態", "since 2018 持續到現在用現在完成式；會議「被舉辦」所以是被動 has been held。"],
+["Ms. Lee ___ the documents by the time the client called.", "had prepared|has prepared|prepares|will prepare", "時態", "客戶打來（過去）之前就已經準備好，用過去完成式。"],
+["Mr. Tsai ___ at the Tokyo branch for two years when he was promoted.", "had been working|has been working|is working|works", "時態", "升職（過去）之前已經持續工作兩年，用過去完成進行式。"],
+["Next week, the CEO ___ our new factory in Tainan.", "will visit|visited|has visited|visiting", "時態", "next week 是未來時間，用未來式。"],
+["The number of online orders ___ sharply last quarter.", "rose|rises|has risen|will rise", "時態", "last quarter 是明確的過去時間，用過去式。rise 的過去式是 rose。"],
+["The new product line ___ at the trade show next month.", "will be introduced|will introduce|introduced|is introducing", "被動", "產品是「被推出」，加上 next month，用未來被動 will be p.p.。"],
+["All employees ___ to attend the safety training on Friday.", "are required|require|requiring|have required", "被動", "員工是「被要求」參加，be required to V。"],
+["The meeting room ___ for the board meeting tomorrow.", "has been reserved|has reserved|reserving|reserves", "被動", "會議室是「被預約」，主詞是物，用被動。"],
+["The damaged items ___ back to the supplier yesterday.", "were sent|sent|are sending|send", "被動", "物品「被寄回」，yesterday 用過去被動 were p.p.。"],
+["The results of the survey ___ to all staff by e-mail next week.", "will be sent|will send|sent|are sending", "被動", "結果「被寄出」，next week 用未來被動。"],
+["Ms. Kao ___ as the new head of the design department last week.", "was appointed|appointed|has appointed|appoints", "被動", "她是「被任命」的人，用過去被動 was appointed。"],
+["The parking lot is currently ___ resurfaced, so please use the side entrance.", "being|been|be|to be", "被動", "is being p.p. 是現在進行被動，表示「正在被重鋪」。"],
+["Applications must ___ before the end of the month.", "be submitted|submit|submitting|have submitting", "被動", "申請表「被繳交」，助動詞後接 be p.p.。"],
+["The museum, which ___ in 1925, attracts thousands of visitors every year.", "was built|built|has built|is building", "被動", "博物館「被建造」於 1925 年，用過去被動。"],
+["The invoice ___ yet, so the payment has been delayed.", "has not been approved|has not approved|did not approve|is not approving", "被動", "發票「還沒被核准」，yet 搭配現在完成式，被動 has not been p.p.。"],
+["Our office supplies ___ by Greenway Office Supplies every month.", "are delivered|deliver|are delivering|delivered", "被動", "用品「被送來」，by 後面是執行者，every month 用現在簡單被動。"],
+["The project manager ___ about the delay as soon as it occurred.", "was informed|informed|has informed|informing", "被動", "經理是「被通知」的人，inform 後面沒有受詞，用被動。"],
+["Please be aware that the elevators ___ from 9 A.M. to noon on Saturday.", "will be inspected|will inspect|inspected|are inspecting", "被動", "電梯「被檢查」，週六是未來時間，用未來被動。"],
+["The training session was ___ by more than 200 employees.", "attended|attending|attend|attendance", "被動", "was + p.p.，課程「被參加」。"],
+["The list of approved vendors ___ been updated.", "has|have|are|were", "主詞動詞一致", "真正的主詞是 the list（單數），of approved vendors 只是修飾。"],
+["Neither the manager nor the assistants ___ aware of the change.", "were|was|is|has been", "主詞動詞一致", "neither A nor B，動詞跟最靠近的 B 一致；assistants 是複數。"],
+["Every employee and visitor ___ required to wear a badge.", "is|are|were|have", "主詞動詞一致", "every A and B 視為單數。"],
+["The number of applicants ___ increased this year.", "has|have|are|were", "主詞動詞一致", "the number of（…的數量）是單數；a number of（許多）才是複數。"],
+["A number of customers ___ complained about the delay.", "have|has|is|was", "主詞動詞一致", "a number of + 複數名詞 = 許多，動詞用複數。"],
+["The information in these reports ___ confidential.", "is|are|were|have been", "主詞動詞一致", "information 是不可數名詞，動詞用單數；in these reports 只是修飾。"],
+["Either Mr. Huang or his assistants ___ the visitors at the airport.", "will meet|meets|is meeting|has met", "主詞動詞一致", "either A or B 跟最靠近的 B（assistants，複數）一致；只有 will meet 不受單複數限制。"],
+["The employees in the accounting department ___ working overtime this week.", "are|is|was|has", "主詞動詞一致", "主詞是 employees（複數），in the accounting department 只是修飾。"],
+["One of the printers on the third floor ___ out of order.", "is|are|were|have been", "主詞動詞一致", "one of + 複數名詞，主詞是 one，動詞用單數。"],
+["The news about the merger ___ surprising to many employees.", "was|were|are|have been", "主詞動詞一致", "news 雖然有 s，但是不可數名詞，動詞用單數。"],
+["Each of the new interns ___ assigned a mentor.", "has been|have been|are|were", "主詞動詞一致", "each of + 複數名詞，主詞是 each，動詞用單數。"],
+["Ten thousand dollars ___ a large amount for a small business to invest.", "is|are|were|have", "主詞動詞一致", "金額、時間、距離當作一個整體時，動詞用單數。"],
+["The equipment that we ordered last month ___ not arrived yet.", "has|have|are|were", "主詞動詞一致", "equipment 是不可數名詞，用單數 has。"],
+["If we had received the order earlier, we ___ it on time.", "would have shipped|will ship|would ship|had shipped", "假設語氣", "與過去事實相反：If + had p.p.，主句用 would have p.p.。"],
+["If I ___ you, I would accept the job offer.", "were|am|be|been", "假設語氣", "與現在事實相反的假設，be 動詞一律用 were。"],
+["Had the weather been better, the event ___ outdoors.", "would have been held|will be held|was held|would hold", "假設語氣", "Had + 主詞 + p.p. 是省略 if 的過去假設；活動「被舉辦」，用 would have been p.p.。"],
+["It is essential that every participant ___ the form before the workshop.", "complete|completes|completed|completing", "假設語氣", "It is essential/important that + 主詞 + (should) 原形動詞。"],
+["Mr. Wu is considering ___ his contract for another year.", "extending|to extend|extend|extended", "動名詞", "consider + Ving。"],
+["The company has decided ___ its overseas operations.", "to expand|expanding|expand|expanded", "不定詞", "decide + to V。"],
+["We look forward to ___ you at the conference.", "seeing|see|seen|saw", "動名詞", "look forward to 的 to 是介係詞，後面接 Ving。"],
+["Ms. Hsu is used to ___ long hours during the busy season.", "working|work|worked|works", "動名詞", "be used to + Ving 表示「習慣於」；used to + V 才是「過去常常」。"]
 ],
 p7: [
 {t:"Email",title:"Office relocation",text:"To: All Staff\nFrom: Grace Liu, Facilities Manager\nDate: March 3\nSubject: Office relocation\n\nDear colleagues,\n\nAs announced last month, our Taipei office will move to the Xinyi Tower on March 28. The move will take place over the weekend so that business is not interrupted. Please pack the items on your desk into the boxes provided by Wednesday, March 25. Label each box with your name and new desk number, which you will receive from your department head next week.\n\nThe IT team will disconnect all computers on Friday afternoon at 3 P.M. Please save your work and log off before then. Equipment will be set up at the new location by Monday morning.\n\nIf you have any questions, contact me at extension 214.\n\nGrace",
@@ -339,6 +421,115 @@ vocab: "accommodate|容納；提供住宿;agenda|議程;allocate|分配;amendmen
 
 </script>
 <script>
+// 原創聽力題。Part 2：[題目, 正解, 錯誤1, 錯誤2, 解析]；Part 3/4：對話稿＋題目（正解放在選項第一個）
+window.BANK.l2 = [
+["Where is the nearest post office?","Two blocks down on the left.","It opens at nine.","I posted it yesterday.","Where 問地點。B 答時間；C 用 post 同字陷阱。"],
+["When does the meeting start?","At ten o'clock.","In Conference Room B.","Yes, I met him.","When 問時間。B 答地點；疑問詞問句不能用 Yes 回答。"],
+["Who's in charge of the new project?","Ms. Lin from marketing.","It's due next Friday.","No, it's free of charge.","Who 問人。C 用 charge 同字陷阱。"],
+["Why was the shipment delayed?","Because of the storm.","By express mail.","I'll ship it today.","Why 問原因。B 答方式；C 用 ship 類似音陷阱。"],
+["How long will the renovation take?","About three weeks.","It's quite long.","On the second floor.","How long 問多久。B 重複 long 的陷阱。"],
+["Would you like some coffee?","Yes, please. With milk.","It's a coffee shop.","I liked it very much.","提供東西的問句，接受或婉拒都可以。C 用 like 陷阱，時態也不對。"],
+["Didn't you send the report yesterday?","Yes, it should be in your inbox.","A weather report.","No, he didn't.","否定疑問句照事實回答。C 主詞變成 he，答非所問。"],
+["Should we take a taxi or the subway?","The subway is faster at this hour.","Yes, we should.","It's a long way.","選擇疑問句不能用 Yes/No 回答，要選其中一個。"],
+["Can you help me move these boxes?","Sure, where do you want them?","They're cardboard boxes.","I moved last year.","請求協助，答應或拒絕。C 用 move 同字陷阱。"],
+["How much does the annual membership cost?","It's three thousand dollars a year.","Many members.","For the annual conference.","How much 問價錢。B、C 重複 member、annual 的陷阱。"],
+["Which printer should I use?","The one by the window works best.","Yes, please print it.","Twenty copies.","Which 問哪一個，答 the one…。"],
+["The client's flight has been canceled.","Then we'd better reschedule the meeting.","A window seat, please.","She's a new client.","直述句要找合理的反應。C 重複 client 的陷阱。"],
+["Have you finished the budget proposal?","I'm still working on it.","Yes, a budget hotel.","He proposed a new plan.","間接回答「還在做」= 還沒完成，是多益常見正解。"],
+["Who should I give this invoice to?","Leave it with the accounting team.","Twenty dollars.","Yes, I gave it to her.","Who 問人，答部門也可以。"],
+["Why don't we have lunch at the new Thai restaurant?","Good idea. I've heard it's great.","Because it's lunchtime.","At noon tomorrow.","Why don't we… 是「提議」，不是問原因。B 是 Why 的陷阱。"],
+["Where did you put the sales figures?","They're in the shared folder.","Sales went up.","Last Tuesday.","Where 問地點。B 重複 sales；C 答時間。"],
+["When will the new software be installed?","Over the weekend.","Our IT department.","It's very soft.","When 問時間。B 答人；C 用 soft 類似音。"],
+["Isn't the store open on Sundays?","Only in the afternoon.","Please open the window.","Yes, it's a big store.","否定疑問句，答「只有下午」補充事實。"],
+["Could you send me the agenda for tomorrow?","I'll e-mail it right away.","Tomorrow is fine.","The agent was helpful.","請求，答應即可。C 用 agent 類似音。"],
+["How did the presentation go?","Better than I expected.","By subway.","It's a present for my sister.","How did… go 問「進行得如何」，不是交通方式。C 用 present 陷阱。"],
+["Do you know where Mr. Park's office is?","It's at the end of the hall.","He parked outside.","Yes, I know the office manager.","間接問句重點在 where。B 用 park 同音陷阱。"],
+["What time does the last train leave?","At eleven forty-five.","From platform two.","Leave it on my desk.","What time 問時間。C 用 leave 同字陷阱。"],
+["Who designed the new logo?","A freelance designer from Taichung.","Yes, it's a new sign.","A long time ago.","Who 問人。"],
+["Are you going to the conference next month?","I haven't decided yet.","It's in the conference room.","Last month.","「還沒決定」是很常見的正解。"],
+["Why is the parking lot closed?","It's being repaved.","Close to the station.","Yes, it's free.","Why 問原因。B 用 close 同字不同義。"],
+["Let's review the contract before we sign it.","Good idea. I'll bring a copy.","I signed up for the class.","A two-year contract.","提議句，回應同意。B 用 sign 陷阱。"],
+["Whose turn is it to clean the break room?","I think it's Tom's.","Turn left at the corner.","It's on the second floor.","Whose 問誰的。B 用 turn 同字陷阱。"],
+["How often do you visit the Osaka branch?","About twice a month.","For three days.","By plane.","How often 問頻率；B 是 How long；C 是 How。"],
+["Would you rather meet in the morning or the afternoon?","The afternoon works better for me.","Yes, I'd like that.","We met this morning.","選擇疑問句，選一個回答。"],
+["The printer is out of paper again.","I'll get some from the supply room.","It printed fifty pages.","A newspaper, please.","直述問題，回應解決方法。"],
+["Wasn't Ms. Kim supposed to lead today's training?","She's out sick, so I'm filling in.","Yes, the train is late.","A training manual.","說明原因並補充，是典型的間接正解。B 用 train 陷阱。"],
+["Where can I find the application forms?","They're on our Web site.","Please apply by Friday.","Yes, I found it.","Where 問地點，網站也算地點。"],
+["When are the quarterly reports due?","By the end of next week.","Four times a year.","They're in my report.","When 問期限。B 用 quarterly 聯想陷阱。"],
+["How many people signed up for the workshop?","Over fifty so far.","In the workshop room.","Sign here, please.","How many 問數量。"],
+["Why hasn't the new manager been announced yet?","The board is still interviewing candidates.","Yes, it was announced.","She manages the store.","Why 問原因，答「還在面試」。"],
+["Can I pay with a credit card?","Yes, we accept all major cards.","It's on my business card.","Pay attention, please.","可以 Yes 回答的一般疑問句。"],
+["Who left this umbrella in the lobby?","It might be Mr. Chen's.","Turn left at the lobby.","At about three.","Who 問人。B 用 left 同字不同義。"],
+["Should I print the handouts now or later?","Now would be better.","Yes, you should.","Thirty handouts.","選擇疑問句，選一個。"],
+["This report needs to be translated into Japanese.","I can ask Yuki to do it.","Japan is a beautiful country.","It was reported yesterday.","直述句，提出解決方法。"],
+["What did you think of the new office layout?","It's much more open now.","I'll think about it.","Lay it on the table.","問意見，回答感想。"],
+["When is the budget meeting?","Let me check my calendar.","About the budget.","In Room 3.","「我查一下」是多益常見的間接正解。"],
+["Who's going to pick up the clients at the airport?","Hasn't Daniel volunteered?","At Taoyuan Airport.","Pick a seat, please.","用反問句回答，暗示是 Daniel。"],
+["Is the new copier working yet?","The technician is coming this afternoon.","Yes, I'm working late.","Three copies, please.","間接回答：技師下午才來 = 還沒修好。"],
+["Where should we hold the year-end party?","How about the hotel near the station?","At the end of December.","Hold the line, please.","用提議回答地點。C 用 hold 同字陷阱。"]
+];
+window.BANK.l3 = [
+{t:"Part 3",title:"Missing office supplies",lines:[
+["W","Hi, this is Karen from Brightway Design. I ordered twenty boxes of printer paper last week, but we only received ten."],
+["M","I'm sorry about that, Karen. It looks like the rest of your order is out of stock at our warehouse."],
+["W","That's a problem. We have a big printing job due on Thursday."],
+["M","I can send the remaining boxes from our downtown store by tomorrow morning, at no extra charge."]],
+q:[["What problem does the woman mention?","An order is incomplete|A delivery went to the wrong address|A price is incorrect|A printer is broken","只收到二十箱中的十箱，訂單不完整。"],
+["Why is the woman concerned?","She has a deadline on Thursday|She is going on vacation|Her budget is limited|Her printer is old","a big printing job due on Thursday。"],
+["What does the man offer to do?","Deliver the items by tomorrow|Give a full refund|Send a new catalog|Visit her office","send the remaining boxes… by tomorrow morning。"]]},
+{t:"Part 3",title:"Second interview",lines:[
+["M","Ms. Wu, thanks for coming in for the interview yesterday. We'd like you to come back for a second interview with our department head."],
+["W","That's great news. When would that be?"],
+["M","Would Wednesday at two P.M. work for you?"],
+["W","I'm afraid I have a class until three on Wednesdays. Could we make it Thursday instead?"],
+["M","Thursday at ten is open. I'll send you a confirmation e-mail."]],
+q:[["Why is the man calling?","To invite the woman to a second interview|To offer the woman a job|To cancel a meeting|To ask for references","come back for a second interview。"],
+["Why can't the woman come on Wednesday?","She has a class|She is traveling|She has another interview|She is working","I have a class until three on Wednesdays。"],
+["What will the man most likely do next?","Send an e-mail|Call the department head|Reserve a room|Mail a contract","最後一句 I'll send you a confirmation e-mail。問「接下來做什麼」多半在最後一句。"]]},
+{t:"Part 3",title:"Group dinner booking",lines:[
+["W","Good evening, Riverside Grill. How can I help you?"],
+["M","Hi, I'd like to book a table for twelve people this Friday for a company dinner."],
+["W","For a group that large, we'd suggest our private room upstairs. It requires a deposit of two thousand dollars."],
+["M","That's fine. Can we also choose a set menu in advance?"],
+["W","Of course. I'll e-mail you our group menus, and you can let us know by Wednesday."]],
+q:[["Where does the woman work?","At a restaurant|At a hotel|At a travel agency|At a catering company","開頭 Riverside Grill 加上訂位，是餐廳。"],
+["What does the woman recommend?","Using a private room|Coming earlier|Ordering online|Reducing the group size","we'd suggest our private room upstairs。"],
+["What should the man do by Wednesday?","Choose a menu|Pay the deposit|Confirm the number of guests|Visit the restaurant","let us know by Wednesday 指的是選套餐。"]]},
+{t:"Part 3",title:"Password problem",lines:[
+["M","Lisa, are you able to log in to the new scheduling system? It keeps telling me my password is wrong."],
+["W","I had the same problem this morning. IT said everyone's password was reset during the update."],
+["M","Oh, so how do I get a new one?"],
+["W","Check your e-mail. They sent a temporary password to all staff at around nine."]],
+q:[["What are the speakers discussing?","A computer system|A work schedule|A staff meeting|A new office","new scheduling system 是電腦系統；schedule 是陷阱。"],
+["According to the woman, what happened during the update?","Passwords were reset|Files were deleted|The system crashed|E-mails were lost","everyone's password was reset during the update。"],
+["What does the woman suggest the man do?","Check his e-mail|Call the IT department|Restart his computer|Ask his manager","Check your e-mail。"]]},
+{t:"Part 3",title:"Trade show brochures",lines:[
+["W","Kevin, the trade show in Taichung starts next Tuesday. Have the brochures arrived from the printer?"],
+["M","Not yet. The printer said there was a problem with the paper supply, so they'll arrive on Monday."],
+["W","That's cutting it close. We need to leave for Taichung on Monday morning."],
+["M","How about I ask them to deliver directly to the exhibition center instead?"],
+["W","Good idea. That way we'll have them in time to set up the booth."]],
+q:[["What event are the speakers preparing for?","A trade show|A product launch|A training workshop|A company anniversary","第一句就說 the trade show in Taichung。"],
+["What caused the delay?","A shortage of paper|A design error|A shipping strike|A missing payment","a problem with the paper supply，換句話說成 shortage of paper。"],
+["What does the man suggest?","Changing the delivery location|Printing fewer brochures|Using a different printer|Leaving a day later","deliver directly to the exhibition center。"]]},
+{t:"Part 4",title:"Train announcement",lines:[
+["N","Attention, passengers on the three fifteen express train to Kaohsiung. Due to a signal problem near Taichung, this train will depart approximately twenty-five minutes late. We apologize for the inconvenience. Passengers who need to make connecting trains should speak to a staff member at the information counter on platform one. Free bottled water is available at the counter while you wait."]],
+q:[["Where is the announcement being made?","At a train station|At an airport|On a bus|At a hotel","passengers、express train、platform one。"],
+["What is the cause of the delay?","A signal problem|Bad weather|A staff shortage|Track repairs","Due to a signal problem。"],
+["What are some listeners advised to do?","Speak to a staff member|Buy a new ticket|Take a bus|Return home","需要轉車的旅客 should speak to a staff member。"]]},
+{t:"Part 4",title:"Appointment reminder",lines:[
+["W","Hi, Mr. Chen. This is Amy from Sunrise Dental Clinic, calling to remind you of your appointment tomorrow at four thirty P.M. Please arrive ten minutes early to fill out an updated insurance form. If you need to change your appointment, call us before six P.M. today. Also, our clinic has moved to the fifth floor of the same building. See you tomorrow."]],
+q:[["Why is the speaker calling?","To remind the listener of an appointment|To cancel an appointment|To request a payment|To introduce a new doctor","calling to remind you of your appointment。"],
+["What is the listener asked to do?","Arrive early|Bring a friend|Send an e-mail|Pay in cash","arrive ten minutes early。"],
+["What has changed at the clinic?","Its location in the building|Its phone number|Its business hours|Its prices","moved to the fifth floor of the same building。"]]},
+{t:"Part 4",title:"Quarterly sales meeting",lines:[
+["M","Good morning, everyone. Before we start, I have some good news. Our online sales rose by eighteen percent last quarter, mainly thanks to the new mobile app. However, customers have told us that the checkout process takes too long. So this quarter, our goal is to make checkout faster. I've asked Daniel from the IT team to join us today and share some ideas. Daniel, the floor is yours."]],
+q:[["What does the speaker say about online sales?","They increased|They decreased|They stayed the same|They are hard to measure","rose by eighteen percent。"],
+["What problem have customers mentioned?","Checkout takes too long|Prices are too high|The app crashes|Delivery is slow","the checkout process takes too long。"],
+["What will most likely happen next?","Daniel will speak|The meeting will end|The speaker will show a video|Participants will take a break","Daniel, the floor is yours = 換 Daniel 發言。"]]}
+];
+</script>
+<script>
 (function(){
 const WD=['日','一','二','三','四','五','六'];
 const DEF={start:'2026-10-19',exam:'2026-11-29',off:[5,6],workMin:90,offMin:240,target:800,pw:19,po:10};
@@ -346,6 +537,7 @@ const store={get(k,d){try{const v=localStorage.getItem('toeic.'+k);return v?JSON
   set(k,v){try{localStorage.setItem('toeic.'+k,JSON.stringify(v))}catch(e){}}};
 let S=Object.assign({},DEF,store.get('settings',{}));
 let DONE=store.get('done',{});
+let askDel=null;
 let SCORES=store.get('scores',[{id:1,date:'2026-10-19',label:'最近一次成績',L:325,R:350}]);
 
 const pd=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
@@ -450,11 +642,12 @@ function renderToday(){
     const p=phaseOf(d);
     body=`<span class="chip">第 ${Math.min(6,Math.floor(diff(S.start,d)/7)+1)} 週・${PH[p].n}</span>
     <div class="meta"><span>${t.type}${d===todayStr?'・今天':''}</span><span class="mono">${tot?Math.floor(tot/60)+' 小時 '+(tot%60)+' 分':''}</span></div>
-    <div class="progress"><i style="width:${t.list.length?dn.length/t.list.length*100:0}%"></i></div>
-    <div class="tasks">${t.list.map((x,i)=>`<div class="task${dn.includes(i)?' done':''}" data-i="${i}" role="checkbox" tabindex="0" aria-checked="${dn.includes(i)}">
-      <span class="bub">${letters[i%4]}</span>
-      <div><div class="tt"><span class="tag ${x.tag}">${{L:'聽力',R:'閱讀',V:'單字',M:'考試'}[x.tag]}</span>${x.t}</div><div class="td">${x.d}</div>${goFor(x.t)}</div>
-      <span class="min">${x.m?x.m+'′':''}</span></div>`).join('')}</div>
+    <div class="progress" role="progressbar" aria-label="今日完成度" aria-valuemin="0" aria-valuemax="${t.list.length}" aria-valuenow="${dn.length}"><i style="width:${t.list.length?dn.length/t.list.length*100:0}%"></i></div>
+    <ul class="tasks" aria-label="今天的任務">${t.list.map((x,i)=>`<li class="task${dn.includes(i)?' done':''}" data-i="${i}">
+      <button class="tbtn" role="checkbox" aria-checked="${dn.includes(i)}">
+      <span class="bub" aria-hidden="true">${letters[i%4]}</span>
+      <span class="tbody"><span class="tt"><span class="tag ${x.tag}">${{L:'聽力',R:'閱讀',V:'單字',M:'考試'}[x.tag]}</span>${x.t}</span><span class="td">${x.d}</span></span>
+      <span class="min">${x.m?x.m+'<span class="sr"> 分鐘</span><span aria-hidden="true">′</span>':''}</span></button>${goFor(x.t)}</li>`).join('')}</ul>
     <div class="note">${PH[p].g}</div>`;
   }
   return `<section><div class="daybar"><button class="navbtn" data-step="-1" aria-label="前一天">‹</button>
@@ -491,14 +684,15 @@ function renderScore(){
   svg+='</svg>';
   const next=SCORES.filter(z=>/模考/.test(z.label)).length+1;
   return `<section><h2 style="font-size:18px">成績走勢</h2><div class="chart">${svg}</div>
-  <form class="sc" id="scForm">
+  <form class="sc" id="scForm" novalidate>
     <label class="full">名稱<input id="scLabel" value="第 ${Math.min(next,5)} 回模考"></label>
-    <label>聽力（5–495）<input id="scL" type="number" inputmode="numeric" min="5" max="495" step="5" required></label>
-    <label>閱讀（5–495）<input id="scR" type="number" inputmode="numeric" min="5" max="495" step="5" required></label>
+    <label>聽力（5–495）<input id="scL" type="number" inputmode="numeric" min="5" max="495" step="5" required aria-describedby="scErr"></label>
+    <label>閱讀（5–495）<input id="scR" type="number" inputmode="numeric" min="5" max="495" step="5" required aria-describedby="scErr"></label>
+    <p class="err" id="scErr" aria-live="polite"></p>
     <label class="full">日期<input id="scDate" type="date" value="${todayStr}"></label>
     <button class="btn full" type="submit">記下成績</button>
   </form>
-  <div class="slist">${s.slice().reverse().map(p=>`<div class="srow"><span>${p.label}<br><small class="muted mono">${p.date}</small></span><span class="mono" style="color:var(--L)">L ${p.L}</span><span class="mono" style="color:var(--R)">R ${p.R}</span><span><span class="tot">${p.L+p.R}</span><button class="del" data-del="${p.id}" aria-label="刪除">×</button></span></div>`).join('')}</div>
+  <div class="slist">${s.slice().reverse().map(p=>`<div class="srow"><span>${esc(p.label)}<br><small class="muted mono">${p.date}</small></span><span class="mono" style="color:var(--L)">L ${p.L}</span><span class="mono" style="color:var(--R)">R ${p.R}</span><span class="tot-wrap"><span class="tot">${p.L+p.R}</span>${askDel===p.id?`<button class="del ask" data-del="${p.id}" aria-label="確認刪除 ${esc(p.label)}">確認刪除</button>`:`<button class="del" data-ask="${p.id}" aria-label="刪除 ${esc(p.label)}">×</button>`}</span></div>`).join('')}</div>
   <p class="muted" style="font-size:13px;margin:0">模考分數用書上附的換算表換成 5–495 分再填。要到 ${S.target}，大約需要聽力 ${Math.min(495,Math.round(S.target/2/5)*5+10)}、閱讀 ${S.target-Math.min(495,Math.round(S.target/2/5)*5+10)}。</p></section>`;
 }
 
@@ -581,6 +775,8 @@ const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math
 const mkOpts=s=>{const o=s.split('|');return shuf(o.map((t,i)=>({t,ok:i===0})))};
 const fmt=s=>{const a=Math.abs(s);return (s<0?'+':'')+Math.floor(a/60)+':'+String(a%60).padStart(2,'0')};
 function goFor(t){
+  if(/Part 2/.test(t))return '<button class="go" data-go="l2">在 APP 裡練習</button>';
+  if(/Part 3\/4|聽力|跟讀/.test(t))return '<button class="go" data-go="l3">在 APP 裡練習</button>';
   if(/Part 5/.test(t))return '<button class="go" data-go="p5">在 APP 裡練習</button>';
   if(/Part 7/.test(t))return '<button class="go" data-go="p7">在 APP 裡練習</button>';
   if(t==='單字')return '<button class="go" data-go="vocab">翻單字卡</button>';
@@ -616,6 +812,7 @@ function startVocab(){
   tab='prac';render();
 }
 function finish(){
+  if(Q.kind==='l3')return finishL();
   Q.done=true;Q.sec=Math.floor((Date.now()-Q.t0)/1000);stopTimer();
   let c=0;
   if(Q.kind==='p5'){
@@ -631,8 +828,14 @@ function finish(){
   Q.c=c;store.set('wrong',WRONG);render();window.scrollTo(0,0);
 }
 function renderPracHome(){
-  const last=P5LOG.slice(-1)[0],p7n=Object.keys(P7DONE).length,known=VOC.filter(v=>(VLV[v.w]||0)>=2).length,wn=WRONG.p5.length+WRONG.p7.length;
+  const last=P5LOG.slice(-1)[0],p7n=Object.keys(P7DONE).length,known=VOC.filter(v=>(VLV[v.w]||0)>=2).length,wn=WRONG.p5.length+WRONG.p7.length+WRONG.l2.length+WRONG.l3.length,l2last=L2LOG.slice(-1)[0],l3n=Object.keys(L3DONE).length;
   return `<section>
+  <div class="eyebrow">聽力</div>
+  <div class="modes">
+    <button class="mode" data-act="l2"><b>Part 2 應答</b><span>每組 10 題，手機朗讀</span><span class="big">${l2last?l2last.c+'/'+l2last.n:'—'}</span><span>${l2last?'上一組成績':'還沒做過'}</span></button>
+    <button class="mode" data-act="l3list"><b>Part 3/4 對話</b><span>${L3.length} 組，先看題再聽</span><span class="big">${l3n}/${L3.length}</span><span>已完成組數</span></button>
+  </div>
+  <div class="eyebrow">閱讀與單字</div>
   <div class="modes">
     <button class="mode" data-act="p5"><b>Part 5 限時</b><span>30 題・9 分鐘，題庫 ${B.p5.length} 題</span><span class="big">${last?last.c+'/'+last.n:'—'}</span><span>${last?'上次用時 '+fmt(last.s):'還沒做過'}</span></button>
     <button class="mode" data-act="p7list"><b>Part 7 閱讀</b><span>每題限時 1 分鐘，${B.p7.length} 篇</span><span class="big">${p7n}/${B.p7.length}</span><span>已完成篇數</span></button>
@@ -643,16 +846,19 @@ function renderPracHome(){
   <div class="note">題目是依多益題型原創的練習題，用來練速度和題型熟悉度。分數請以《神猜解》全真模考為準。</div></section>`;
 }
 function renderP7List(){
-  return `<section><div class="daybar"><button class="navbtn" data-act="home" aria-label="返回">‹</button><h2>Part 7 閱讀</h2><span style="width:40px"></span></div>
+  return `<section><div class="daybar"><button class="navbtn" data-act="home" aria-label="返回">‹</button><h2>Part 7 閱讀</h2><span style="width:44px" aria-hidden="true"></span></div>
   <div class="rows">${B.p7.map((p,i)=>{const d=P7DONE[i];return `<button class="row" data-p7="${i}" style="grid-template-columns:1fr auto"><span class="s"><b style="font-weight:500">${esc(p.title)}</b><br><small class="muted">${p.t}・${p.q.length} 題・限時 ${p.q.length} 分鐘</small></span><span class="st mono${d&&d.c===d.n?' ok':''}">${d?d.c+'/'+d.n:'未做'}</span></button>`}).join('')}</div></section>`;
 }
 function renderWrong(){
   const p7=WRONG.p7.map(k=>k.split('-').map(Number));
   const byP=[...new Set(p7.map(x=>x[0]))];
-  return `<section><div class="daybar"><button class="navbtn" data-act="home" aria-label="返回">‹</button><h2>錯題本</h2><span style="width:40px"></span></div>
+  const l3=WRONG.l3.map(k=>k.split('-').map(Number)),byL=[...new Set(l3.map(x=>x[0]))];
+  return `<section><div class="daybar"><button class="navbtn" data-act="home" aria-label="返回">‹</button><h2>錯題本</h2><span style="width:44px" aria-hidden="true"></span></div>
+  ${WRONG.l2.length?`<button class="btn" data-act="l2retry">重做 Part 2 錯題（${WRONG.l2.length} 題）</button>`:''}
+  ${byL.length?`<div class="rows">${byL.map(si=>`<button class="row" data-l3w="${si}" style="grid-template-columns:1fr auto"><span class="s">${esc(L3[si].title)}<br><small class="muted">${L3[si].t}</small></span><span class="st mono bad">${l3.filter(x=>x[0]===si).length} 題</span></button>`).join('')}</div>`:''}
   ${WRONG.p5.length?`<button class="btn" data-act="p5retry">重做 Part 5 錯題（${WRONG.p5.length} 題）</button>`:''}
   ${byP.length?`<div class="rows">${byP.map(pi=>`<button class="row" data-p7w="${pi}" style="grid-template-columns:1fr auto"><span class="s">${esc(B.p7[pi].title)}</span><span class="st mono bad">${p7.filter(x=>x[0]===pi).length} 題</span></button>`).join('')}</div>`:''}
-  ${!WRONG.p5.length&&!byP.length?'<div class="note">目前沒有錯題。做完練習後，答錯的題目會自動收進這裡，重做答對就會移除。</div>':''}
+  ${!WRONG.p5.length&&!byP.length&&!WRONG.l2.length&&!byL.length?'<div class="note">目前沒有錯題。做完練習後，答錯的題目會自動收進這裡，重做答對就會移除。</div><button class="btn" data-act="l2">先做一組 Part 2 聽力</button>':''}
   ${WRONG.p5.length?`<div class="slist">${WRONG.p5.map(i=>{const q=B.p5[i];return `<div class="rv"><span class="s">${esc(q[0].replace('___','<u>'+q[1].split('|')[0]+'</u>')).replace(/&lt;(\/?)u&gt;/g,'<$1u>')}</span><span class="exp">${esc(q[2])}｜${esc(q[3])}</span></div>`}).join('')}</div>`:''}
   </section>`;
 }
@@ -666,7 +872,7 @@ function renderP5(){
   }
   const it=Q.items[Q.cur],q=B.p5[it.i];
   return `<section>${bar((Q.retry?'錯題重做 ':'Part 5 ')+(Q.cur+1)+' / '+Q.items.length)}
-  <div class="progress"><i style="width:${Q.cur/Q.items.length*100}%"></i></div>
+  <div class="progress" role="progressbar" aria-label="答題進度" aria-valuemin="0" aria-valuemax="${Q.items.length}" aria-valuenow="${Q.cur}"><i style="width:${Q.cur/Q.items.length*100}%"></i></div>
   <div class="qtext">${esc(q[0]).replace('___','<b>_______</b>')}</div>
   <div class="opts">${it.opts.map((o,k)=>`<button class="opt${it.pick===k?' pick':''}" data-pick="${k}"><span class="bub">${LET[k]}</span><span>${esc(o.t)}</span></button>`).join('')}</div>
   <div class="row2"><button class="btn ghost" data-act="prev" ${Q.cur?'':'disabled'}>上一題</button>${Q.cur<Q.items.length-1?'<button class="btn ghost" data-act="next">跳過</button>':'<button class="btn" data-act="finish">交卷</button>'}</div></section>`;
@@ -688,14 +894,128 @@ function renderVocab(){
   <div class="card" data-act="flip"><span class="w">${esc(v.w)}</span>${Q.flip?`<span class="m">${esc(v.m)}</span>`:'<span class="muted" style="font-size:13px">點一下看中文</span>'}</div>
   <div class="row2"><button class="btn ghost" data-vk="0">不熟</button><button class="btn" data-vk="1">認識</button></div></section>`;
 }
+/* ===== 聽力（用手機內建英文語音朗讀） ===== */
+const L2=B.l2||[],L3=B.l3||[];
+if(!WRONG.l2)WRONG.l2=[];if(!WRONG.l3)WRONG.l3=[];
+let L2LOG=store.get('l2log',[]),L3DONE=store.get('l3done',{});
+const TTS={ok:!!window.speechSynthesis&&typeof window.SpeechSynthesisUtterance==='function',rate:+store.get('rate',0.95),voices:[],run:0,keep:null};
+function loadVoices(){if(!TTS.ok)return;try{TTS.voices=(speechSynthesis.getVoices()||[]).filter(x=>/^en[-_]/i.test(x.lang))}catch(e){}}
+if(TTS.ok){loadVoices();try{speechSynthesis.addEventListener('voiceschanged',loadVoices)}catch(e){}}
+const FEM=/samantha|karen|moira|tessa|serena|victoria|allison|ava|susan|zira|female|fiona|kate|martha|catherine|nicky|kathy/i;
+const MAL=/daniel|alex|fred|aaron|arthur|oliver|rishi|gordon|david|mark|james|reed|tom|lee|\bmale\b/i;
+function voiceFor(who){
+  const v=TTS.voices;if(!v.length)return null;
+  const us=l=>l.find(x=>/en[-_]US/i.test(x.lang))||l[0];
+  if(who==='N')return us(v.filter(x=>/en[-_](GB|AU)/i.test(x.lang)))||us(v);
+  const pool=who==='M'?v.filter(x=>MAL.test(x.name)&&!FEM.test(x.name)):v.filter(x=>FEM.test(x.name));
+  return us(pool)||us(v);
+}
+function setPlaying(on){const b=document.getElementById('playBtn');if(!b)return;b.classList.toggle('playing',on);b.setAttribute('aria-pressed',on?'true':'false');const t=b.querySelector('.pl');if(t)t.textContent=on?'停止':(Q&&Q.plays?'再聽一次':'播放')}
+function stopSpeech(){TTS.run++;if(TTS.ok){try{speechSynthesis.cancel()}catch(e){}}setPlaying(false)}
+function speak(lines){
+  if(!TTS.ok)return Promise.resolve(false);
+  stopSpeech();const run=TTS.run;setPlaying(true);
+  const same=voiceFor('M')===voiceFor('W');
+  return new Promise(res=>{let i=0;
+    const next=()=>{
+      if(run!==TTS.run)return res(false);
+      if(i>=lines.length){setPlaying(false);return res(true)}
+      const l=lines[i++],u=new SpeechSynthesisUtterance(l.t),v=voiceFor(l.who||'W');
+      u.lang=v?v.lang:'en-US';if(v)u.voice=v;
+      u.pitch=same&&l.who==='M'?0.8:same&&l.who==='W'?1.15:1;u.rate=TTS.rate;
+      u.onend=()=>setTimeout(next,l.gap==null?400:l.gap);u.onerror=()=>setTimeout(next,60);
+      TTS.keep=u;speechSynthesis.speak(u);
+    };next();});
+}
+function rateCtl(){return `<label class="rate"><span>語速</span><select id="rate" aria-label="朗讀語速">${[[0.85,'慢'],[0.95,'標準'],[1.05,'快']].map(([v,t])=>`<option value="${v}"${Math.abs(TTS.rate-v)<.01?' selected':''}>${t}</option>`).join('')}</select></label>`}
+function playBtn(extra){return TTS.ok?`<button class="play" id="playBtn" data-act="play" aria-pressed="false"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6h4v12H7zM13 6h4v12h-4z"/></svg><span class="pl">${Q&&Q.plays?'再聽一次':'播放'}</span>${extra||''}</button>`:'<div class="note">這台裝置不支援英文語音朗讀。iPhone 請到「設定 → 輔助使用 → 朗讀內容 → 聲音 → 英文」下載語音。</div>'}
+
+function startL2(retry){
+  let ids;
+  if(retry)ids=shuf(WRONG.l2);
+  else{const w=new Set(WRONG.l2),all=shuf(L2.map((_,i)=>i));ids=shuf(all.filter(i=>w.has(i)).slice(0,3).concat(all.filter(i=>!w.has(i))).slice(0,10))}
+  if(!ids.length)return;
+  Q={kind:'l2',retry:!!retry,items:ids.map(i=>({i,pick:-1,qv:Math.random()<.5?'W':'M',opts:shuf(L2[i].slice(1,4).map((t,k)=>({t,ok:k===0})))})),cur:0,plays:0,done:false};
+  tab='prac';render();window.scrollTo(0,0);playCur();
+}
+function startL3(si,onlyWrong){
+  const S3=L3[si];let qs=S3.q.map((_,k)=>k);
+  if(onlyWrong)qs=qs.filter(k=>WRONG.l3.includes(si+'-'+k));
+  Q={kind:'l3',si,items:qs.map(k=>({k,opts:mkOpts(S3.q[k][1]),pick:-1})),plays:0,done:false};
+  tab='prac';render();window.scrollTo(0,0);playCur();
+}
+function playCur(){
+  if(!Q)return;
+  if(document.getElementById('playBtn')&&document.getElementById('playBtn').classList.contains('playing')){stopSpeech();return}
+  Q.plays++;
+  let lines;
+  if(Q.kind==='l2'){const it=Q.items[Q.cur],q=L2[it.i],rv=it.qv==='W'?'M':'W';
+    lines=[{t:q[0],who:it.qv,gap:1000}].concat(it.opts.map((o,k)=>({t:LET[k]+'. '+o.t,who:rv,gap:800})));}
+  else lines=L3[Q.si].lines.map(([who,t])=>({t,who,gap:350}));
+  speak(lines).then(()=>{const c=document.getElementById('plays');if(c)c.textContent=Q.plays})
+}
+function finishL(){
+  stopSpeech();Q.done=true;let c=0;
+  if(Q.kind==='l2'){
+    Q.items.forEach(it=>{const ok=it.pick>=0&&it.opts[it.pick].ok;if(ok)c++;const has=WRONG.l2.includes(it.i);
+      if(!ok&&!has)WRONG.l2.push(it.i);if(ok&&has)WRONG.l2=WRONG.l2.filter(x=>x!==it.i)});
+    if(!Q.retry){L2LOG.push({d:todayStr,c,n:Q.items.length});store.set('l2log',L2LOG)}
+  }else{
+    Q.items.forEach(it=>{const key=Q.si+'-'+it.k,ok=it.pick>=0&&it.opts[it.pick].ok;if(ok)c++;const has=WRONG.l3.includes(key);
+      if(!ok&&!has)WRONG.l3.push(key);if(ok&&has)WRONG.l3=WRONG.l3.filter(x=>x!==key)});
+    L3DONE[Q.si]={c,n:Q.items.length,p:Q.plays};store.set('l3done',L3DONE);
+  }
+  Q.c=c;store.set('wrong',WRONG);render();window.scrollTo(0,0);
+}
+const who=w=>w==='M'?'男':w==='W'?'女':'廣播';
+function renderL2(){
+  if(Q.done){
+    return `<section><div class="result"><b>${Q.c}/${Q.items.length}</b><span class="muted">Part 2 應答</span></div>
+    <div class="row2"><button class="btn" data-act="${Q.retry?'l2retry':'l2'}">再做一組</button><button class="btn ghost" data-act="home">回練習首頁</button></div>
+    <div class="slist">${Q.items.map((it,n)=>{const q=L2[it.i],ok=it.pick>=0&&it.opts[it.pick].ok;
+      return `<div class="rv"><span class="s">${n+1}. ${esc(q[0])}</span><span class="a">${ok?'<span class="ok">✓ '+esc(q[1])+'</span>':'<span class="bad">✗ '+(it.pick>=0?esc(it.opts[it.pick].t):'未作答')+'</span>　正解 <b>'+esc(q[1])+'</b>'}</span><span class="exp">${esc(q[4])}</span></div>`}).join('')}</div></section>`;
+  }
+  const it=Q.items[Q.cur],q=L2[it.i],ans=it.pick>=0;
+  return `<section><div class="qbar"><button class="navbtn" data-act="quit" aria-label="離開練習">×</button><span class="muted" style="font-size:13px">${Q.retry?'錯題重做 ':'Part 2 '}${Q.cur+1} / ${Q.items.length}</span>${rateCtl()}</div>
+  <div class="progress" role="progressbar" aria-label="答題進度" aria-valuemin="0" aria-valuemax="${Q.items.length}" aria-valuenow="${Q.cur}"><i style="width:${Q.cur/Q.items.length*100}%"></i></div>
+  <p class="muted" style="margin:0;font-size:14px">聽一句問句和三個回應，選出最合適的回應。題目不顯示文字，跟正式考試一樣。</p>
+  ${playBtn()}
+  <div class="abc" role="group" aria-label="選擇答案">${it.opts.map((o,k)=>{let c='';if(ans){if(o.ok)c=' right';else if(it.pick===k)c=' wrong'}
+    return `<button class="opt big${c}" data-pickl2="${k}" ${ans?'disabled':''} aria-label="選項 ${LET[k]}"><span class="bub">${LET[k]}</span></button>`}).join('')}</div>
+  ${ans?`<div class="script" aria-live="polite"><p class="${it.opts[it.pick].ok?'ok':'bad'}" style="margin:0;font-weight:500">${it.opts[it.pick].ok?'答對了':'答錯了，正解是 '+LET[it.opts.findIndex(o=>o.ok)]}</p>
+    <p class="en">${esc(q[0])}</p>${it.opts.map((o,k)=>`<p class="en${o.ok?' ok':''}">${LET[k]}. ${esc(o.t)}</p>`).join('')}<span class="exp">${esc(q[4])}</span></div>
+    <button class="btn" data-act="l2next">${Q.cur<Q.items.length-1?'下一題':'看結果'}</button>`:''}</section>`;
+}
+function renderL3(){
+  const S3=L3[Q.si];
+  const qs=Q.items.map((it,n)=>{const q=S3.q[it.k];
+    return `<div class="qblock"><h4>${n+1}. ${esc(q[0])}</h4><div class="opts">${it.opts.map((o,k)=>{
+      let c='';if(Q.done){if(o.ok)c=' right';else if(it.pick===k)c=' wrong'}else if(it.pick===k)c=' pick';
+      return `<button class="opt${c}" data-pickl3="${n}-${k}" ${Q.done?'disabled':''}><span class="bub">${LET[k]}</span><span>${esc(o.t)}</span></button>`}).join('')}</div>${Q.done?`<span class="exp">${esc(q[2])}</span>`:''}</div>`}).join('');
+  const head=Q.done?`<div class="result"><b>${Q.c}/${Q.items.length}</b><span class="muted">聽了 ${Q.plays} 次${Q.plays>1?'（正式考試只播一次）':''}</span></div>`
+    :`<div class="qbar"><button class="navbtn" data-act="quit" aria-label="離開練習">×</button><span class="muted" style="font-size:13px">${S3.t}・${esc(S3.title)}</span>${rateCtl()}</div>
+      <p class="muted" style="margin:0;font-size:14px">先花 10 秒看完題目和選項，再按播放。正式考試只播一次，盡量聽一次就作答。</p>`;
+  return `<section>${head}${playBtn(Q.done?'':`<span class="cnt">已播放 <b id="plays">${Q.plays}</b> 次</span>`)}${qs}
+  ${Q.done?`<div class="script"><div class="eyebrow">逐字稿</div>${S3.lines.map(([w,t])=>`<p class="en"><b class="who">${who(w)}</b>${esc(t)}</p>`).join('')}</div>
+    <div class="row2"><button class="btn" data-act="l3list">下一組</button><button class="btn ghost" data-act="home">回練習首頁</button></div>`:'<button class="btn" data-act="finish">交卷</button>'}</section>`;
+}
+function renderL3List(){
+  return `<section><div class="daybar"><button class="navbtn" data-act="home" aria-label="返回練習首頁">‹</button><h2>Part 3/4 聽力</h2><span style="width:44px"></span></div>
+  <div class="rows">${L3.map((s,i)=>{const d=L3DONE[i];return `<button class="row" data-l3="${i}" style="grid-template-columns:1fr auto"><span class="s"><b style="font-weight:500">${esc(s.title)}</b><br><small class="muted">${s.t}・${s.t==='Part 3'?'對話':'短講'}・${s.q.length} 題</small></span><span class="st mono${d&&d.c===d.n?' ok':''}">${d?d.c+'/'+d.n:'未做'}</span></button>`}).join('')}</div></section>`;
+}
+
 function renderPrac(){
-  if(!Q)return pracView==='p7list'?renderP7List():pracView==='wrong'?renderWrong():renderPracHome();
-  return Q.kind==='p5'?renderP5():Q.kind==='p7'?renderP7():renderVocab();
+  if(!Q)return pracView==='p7list'?renderP7List():pracView==='l3list'?renderL3List():pracView==='wrong'?renderWrong():renderPracHome();
+  return Q.kind==='p5'?renderP5():Q.kind==='p7'?renderP7():Q.kind==='l2'?renderL2():Q.kind==='l3'?renderL3():renderVocab();
 }
 let pracView='home';
 function pracClick(e){
   const a=e.target.closest('[data-act]'),go=e.target.closest('[data-go]');
-  if(go){const g=go.dataset.go;g==='p5'?startP5():g==='vocab'?startVocab():(Q=null,pracView='p7list',tab='prac',render());return true}
+  if(go){const g=go.dataset.go;stopSpeech();g==='p5'?startP5():g==='vocab'?startVocab():g==='l2'?startL2():(Q=null,pracView=g==='l3'?'l3list':'p7list',tab='prac',render(),window.scrollTo(0,0));return true}
+  const l3=e.target.closest('[data-l3]');if(l3){startL3(+l3.dataset.l3);return true}
+  const l3w=e.target.closest('[data-l3w]');if(l3w){startL3(+l3w.dataset.l3w,true);return true}
+  const pl2=e.target.closest('[data-pickl2]');if(pl2&&Q&&Q.kind==='l2'){const it=Q.items[Q.cur];if(it.pick<0){it.pick=+pl2.dataset.pickl2;stopSpeech();render()}return true}
+  const pl3=e.target.closest('[data-pickl3]');if(pl3&&Q){const[n,k]=pl3.dataset.pickl3.split('-').map(Number);Q.items[n].pick=k;const y=window.scrollY;render();window.scrollTo(0,y);return true}
   const p7=e.target.closest('[data-p7]');if(p7){startP7(+p7.dataset.p7);return true}
   const p7w=e.target.closest('[data-p7w]');if(p7w){startP7(+p7w.dataset.p7w,true);return true}
   const pk=e.target.closest('[data-pick]');if(pk&&Q){const it=Q.items[Q.cur];it.pick=+pk.dataset.pick;
@@ -706,7 +1026,12 @@ function pracClick(e){
     VLV[v]=Math.max(0,Math.min(3,(VLV[v]||0)+(ok?1:-1)));if(ok)Q.known++;store.set('vocab',VLV);Q.cur++;Q.flip=false;render();return true}
   if(!a)return false;
   const act=a.dataset.act;
-  if(act==='p5')startP5();
+  if(act==='play'){playCur();return true}
+  if(act==='l2next'){if(Q.cur<Q.items.length-1){Q.cur++;Q.plays=0;render();playCur()}else finishL();return true}
+  stopSpeech();
+  if(act==='l2')startL2();
+  else if(act==='l2retry')startL2(true);
+  else if(act==='p5')startP5();
   else if(act==='p5retry')startP5(true);
   else if(act==='vocab')startVocab();
   else if(act==='flip'){Q.flip=!Q.flip;render()}
@@ -714,7 +1039,7 @@ function pracClick(e){
   else if(act==='prev'){Q.cur--;render()}
   else if(act==='finish')finish();
   else if(act==='quit'){stopTimer();Q=null;pracView='home';render()}
-  else{stopTimer();Q=null;pracView=act==='p7list'?'p7list':act==='wrong'?'wrong':'home';render();window.scrollTo(0,0)}
+  else{stopTimer();Q=null;pracView=act==='p7list'?'p7list':act==='l3list'?'l3list':act==='wrong'?'wrong':'home';render();window.scrollTo(0,0)}
   return true;
 }
 
@@ -722,7 +1047,7 @@ function render(){
   header();
   const v=document.getElementById('view');
   v.innerHTML=tab==='today'?renderToday():tab==='plan'?renderPlan():tab==='score'?renderScore():tab==='prac'?renderPrac():renderSet();
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  document.querySelectorAll('nav button').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);on?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current')});
 }
 
 function toggle(i){
@@ -731,23 +1056,26 @@ function toggle(i){
 }
 
 document.addEventListener('click',e=>{
-  const nb=e.target.closest('nav button');if(nb){tab=nb.dataset.tab;confirmReset=false;render();window.scrollTo(0,0);return}
+  const nb=e.target.closest('nav button');if(nb){stopSpeech();tab=nb.dataset.tab;confirmReset=false;render();window.scrollTo(0,0);return}
   if(pracClick(e))return;
   const st=e.target.closest('[data-step]');if(st){sel=ymd(add(pd(sel||defaultSel()),+st.dataset.step));render();return}
   const dd=e.target.closest('[data-d]');if(dd){sel=dd.dataset.d;tab='today';render();window.scrollTo(0,0);return}
-  const tk=e.target.closest('.task');if(tk){toggle(+tk.dataset.i);return}
-  const dl=e.target.closest('[data-del]');if(dl){SCORES=SCORES.filter(s=>s.id!=dl.dataset.del);store.set('scores',SCORES);render();return}
+  const tb=e.target.closest('.tbtn');if(tb){const i=+tb.closest('.task').dataset.i;toggle(i);const f=document.querySelector(`.task[data-i="${i}"] .tbtn`);if(f)f.focus({preventScroll:true});return}
+  const ak=e.target.closest('[data-ask]');if(ak){askDel=+ak.dataset.ask;render();const c=document.querySelector(`[data-del="${askDel}"]`);if(c)c.focus();return}
+  const dl=e.target.closest('[data-del]');if(dl){SCORES=SCORES.filter(s=>s.id!=dl.dataset.del);askDel=null;store.set('scores',SCORES);render();return}
+  if(askDel!==null&&!e.target.closest('.del')){askDel=null;if(tab==='score'){render()}}
   const of=e.target.closest('[data-off]');if(of){const i=+of.dataset.off;S.off=S.off.includes(i)?S.off.filter(x=>x!==i):S.off.concat(i);of.classList.toggle('on');return}
   if(e.target.id==='pushOn'){enablePush();return}
   if(e.target.id==='reset'){if(confirmReset){DONE={};store.set('done',DONE);confirmReset=false}else confirmReset=true;render()}
 });
-document.addEventListener('change',e=>{if(e.target.id==='pw'||e.target.id==='po'){S[e.target.id]=+e.target.value;store.set('settings',S);if(PUSHID)syncPush().then(ok=>pushMsg(ok?'已同步新的提醒時間。':'同步失敗，請稍後按「重新同步提醒」。'))}});
-document.addEventListener('keydown',e=>{const tk=e.target.closest&&e.target.closest('.task');if(tk&&(e.key===' '||e.key==='Enter')){e.preventDefault();toggle(+tk.dataset.i)}});
+document.addEventListener('change',e=>{if(e.target.id==='rate'){TTS.rate=+e.target.value;store.set('rate',TTS.rate);return}if(e.target.id==='pw'||e.target.id==='po'){S[e.target.id]=+e.target.value;store.set('settings',S);if(PUSHID)syncPush().then(ok=>pushMsg(ok?'已同步新的提醒時間。':'同步失敗，請稍後按「重新同步提醒」。'))}});
 document.addEventListener('submit',e=>{
   e.preventDefault();
   if(e.target.id==='scForm'){
     const L=+document.getElementById('scL').value,R=+document.getElementById('scR').value;
-    if(!(L>=5&&L<=495&&R>=5&&R<=495))return;
+    const okL=L>=5&&L<=495,okR=R>=5&&R<=495;
+    document.getElementById('scL').setAttribute('aria-invalid',okL?'false':'true');document.getElementById('scR').setAttribute('aria-invalid',okR?'false':'true');
+    if(!okL||!okR){document.getElementById('scErr').textContent=(!okL&&!okR?'聽力和閱讀':!okL?'聽力':'閱讀')+'分數要在 5 到 495 之間。請先用書上的換算表換算再填。';(okL?document.getElementById('scR'):document.getElementById('scL')).focus();return}
     SCORES.push({id:Date.now(),date:document.getElementById('scDate').value||todayStr,label:document.getElementById('scLabel').value||'模考',L,R});
     store.set('scores',SCORES);render();
   }else if(e.target.id==='setForm'){
