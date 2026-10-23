@@ -90,7 +90,7 @@ section{display:flex;flex-direction:column;gap:12px;padding-top:18px}
 
 /* plan */
 .wk{display:flex;flex-direction:column;gap:8px;padding-bottom:6px}
-.wk h3{font-size:16px;display:flex;justify-content:space-between;gap:8px}
+.wk h2{font-size:16px;display:flex;justify-content:space-between;gap:8px}
 .wk p{margin:0;font-size:13px;color:var(--muted)}
 .rows{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .row{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left;font:inherit;color:inherit}
@@ -121,7 +121,7 @@ input[aria-invalid="true"]{border-color:var(--M)}
 .del.ask{min-width:auto;font-size:13px;font-weight:500;color:var(--M);padding:0 10px}
 
 /* settings */
-.days7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.days7{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .days7 button{font:inherit;min-height:44px;padding:8px 0;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
 .days7 button.on{background:var(--accent);border-color:var(--accent);color:var(--card)}
 
@@ -152,7 +152,7 @@ nav button.on{color:var(--accent)}
 .opt.wrong .bub{background:var(--M);border-color:var(--M);color:var(--card)}
 .passage{white-space:pre-wrap;font-size:15px;line-height:1.65;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;font-family:Georgia,"Noto Serif TC",serif}
 .qblock{display:flex;flex-direction:column;gap:8px;padding-top:6px}
-.qblock h4{margin:0;font-size:15px;font-weight:500}
+.qblock h2{margin:0;font-size:15px;font-weight:500}
 .exp{font-size:13px;color:var(--muted);padding:10px 12px;background:var(--accent-soft);border-radius:10px}
 .result{display:flex;align-items:baseline;gap:10px}
 .result b{font-family:var(--mono);font-size:44px;color:var(--accent)}
@@ -181,6 +181,8 @@ nav button.on{color:var(--accent)}
 .script{display:flex;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .script .en{margin:0;font-family:Georgia,"Noto Serif TC",serif;font-size:15px;line-height:1.6}
 .script .who{display:inline-block;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-right:8px;vertical-align:2px}
+.note.warn{border-left-color:var(--M);color:var(--ink);line-height:1.7}
+.diag{display:block;margin-top:6px;font-size:12px;color:var(--muted)}
 .rate{flex-direction:row;align-items:center;gap:6px;font-size:12px}
 .rate select{font-size:15px;padding:6px 8px;width:auto;min-height:44px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -662,7 +664,7 @@ function renderPlan(){
   let h=`<section><div class="note">《神猜解》兩本和《怪物講師 單字+文法》目前是試用版。你的書櫃還有 3 個未使用兌換碼，先確認能不能換成完整版，這份計畫的模考與 Part 7 練習都靠這兩本。</div>`;
   Object.keys(groups).forEach(w=>{
     const ds=groups[w],p=phaseOf(ds[0]),k=ds.filter(x=>statusOf(x)===2).length;
-    h+=`<div class="wk"><h3><span>第 ${+w+1} 週・${PH[p].n}</span><span class="mono muted" style="font-size:13px">${k}/${ds.length}</span></h3><p>${md(ds[0])}–${md(ds[ds.length-1])}　${PH[p].g}</p>
+    h+=`<div class="wk"><h2><span>第 ${+w+1} 週・${PH[p].n}</span><span class="mono muted" style="font-size:13px">${k}/${ds.length}</span></h2><p>${md(ds[0])}–${md(ds[ds.length-1])}　${PH[p].g}</p>
     <div class="rows">${ds.map(x=>{const t=tasksFor(x),st=statusOf(x),dn=doneOf(x).length;
       return `<button class="row${x===todayStr?' today':''}" data-d="${x}"><span class="d">${md(x)}<small>${WD[pd(x).getDay()]}・${t?t.type:''}</small></span><span class="s">${t?t.list.map(y=>y.t).join('・'):''}</span><span class="st mono${st===2?' ok':''}">${t?dn+'/'+t.list.length:''}</span></button>`}).join('')}</div></div>`});
   return h+'</section>';
@@ -835,6 +837,7 @@ function renderPracHome(){
     <button class="mode" data-act="l2"><b>Part 2 應答</b><span>每組 10 題，手機朗讀</span><span class="big">${l2last?l2last.c+'/'+l2last.n:'—'}</span><span>${l2last?'上一組成績':'還沒做過'}</span></button>
     <button class="mode" data-act="l3list"><b>Part 3/4 對話</b><span>${L3.length} 組，先看題再聽</span><span class="big">${l3n}/${L3.length}</span><span>已完成組數</span></button>
   </div>
+  ${TTS.ok?`<button class="btn ghost" id="ttsTest" data-act="ttstest">測試聲音</button><div id="ttsMsg" aria-live="polite"></div>`:'<div class="note warn">這台裝置不支援英文語音朗讀，聽力練習無法播放。</div>'}
   <div class="eyebrow">閱讀與單字</div>
   <div class="modes">
     <button class="mode" data-act="p5"><b>Part 5 限時</b><span>30 題・9 分鐘，題庫 ${B.p5.length} 題</span><span class="big">${last?last.c+'/'+last.n:'—'}</span><span>${last?'上次用時 '+fmt(last.s):'還沒做過'}</span></button>
@@ -880,7 +883,7 @@ function renderP5(){
 function renderP7(){
   const P=B.p7[Q.pi];
   const qs=Q.items.map((it,n)=>{const q=P.q[it.k];
-    return `<div class="qblock"><h4>${n+1}. ${esc(q[0])}</h4><div class="opts">${it.opts.map((o,k)=>{
+    return `<div class="qblock"><h2>${n+1}. ${esc(q[0])}</h2><div class="opts">${it.opts.map((o,k)=>{
       let c='';if(Q.done){if(o.ok)c=' right';else if(it.pick===k)c=' wrong'}else if(it.pick===k)c=' pick';
       return `<button class="opt${c}" data-pick7="${n}-${k}" ${Q.done?'disabled':''}><span class="bub">${LET[k]}</span><span>${esc(o.t)}</span></button>`}).join('')}</div>${Q.done?`<span class="exp">${esc(q[2])}</span>`:''}</div>`}).join('');
   return `<section>${Q.done?`<div class="result"><b>${Q.c}/${Q.items.length}</b><span class="muted">用時 <span class="mono ${Q.sec<=Q.limit?'ok':'bad'}">${fmt(Q.sec)}</span>（目標 ${fmt(Q.limit)}）</span></div>`:bar(esc(P.title))}
@@ -911,24 +914,56 @@ function voiceFor(who){
   return us(pool)||us(v);
 }
 function setPlaying(on){const b=document.getElementById('playBtn');if(!b)return;b.classList.toggle('playing',on);b.setAttribute('aria-pressed',on?'true':'false');const t=b.querySelector('.pl');if(t)t.textContent=on?'停止':(Q&&Q.plays?'再聽一次':'播放')}
-function stopSpeech(){TTS.run++;if(TTS.ok){try{speechSynthesis.cancel()}catch(e){}}setPlaying(false)}
+function stopSpeech(){TTS.run++;if(TTS.ok){try{if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel()}catch(e){}}setPlaying(false)}
+// iPhone：第一次點擊時把音訊切成「播放」模式（不受靜音開關影響的那種），並喚醒朗讀引擎
+let audioReady=false;
+function unlockAudio(){
+  if(audioReady||!TTS.ok)return;audioReady=true;
+  try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
+  try{const a=new Audio('data:audio/mp4;base64,AAAAHGZ0eXBNNEEgAAAAAE00QSBpc29tbXA0MgAAAAFtZGF0AAAAAA==');a.muted=false;a.volume=0.01;const p=a.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}
+  try{const w=new SpeechSynthesisUtterance(' ');w.volume=0;speechSynthesis.speak(w)}catch(e){}
+}
+TTS.diag={};
+function ttsMsg(html){const el=document.getElementById('ttsMsg');if(el)el.innerHTML=html}
+function noSoundHelp(){
+  const d=TTS.diag,v=TTS.voices.length;
+  return `<div class="note warn"><b>沒有聽到聲音？</b><br>1. 關掉 iPhone 側邊的靜音開關<br>2. 按音量鍵調大「媒體」音量<br>3. 到「設定 → 輔助使用 → 朗讀內容 → 聲音 → 英文」下載一個聲音（例如 Samantha）<br>4. 把 APP 從背景完全關掉再打開
+  <span class="diag">檢查結果：朗讀${TTS.ok?'支援':'不支援'}・英文語音 ${v} 個・${d.start?'已開始播放':'沒有開始播放'}${d.err?'・錯誤 '+esc(d.err):''}</span></div>`;
+}
 function speak(lines){
   if(!TTS.ok)return Promise.resolve(false);
-  stopSpeech();const run=TTS.run;setPlaying(true);
+  let busy=false;try{busy=speechSynthesis.speaking||speechSynthesis.pending}catch(e){}
+  unlockAudio();loadVoices();
+  TTS.run++;if(busy){try{speechSynthesis.cancel()}catch(e){}}
+  const run=TTS.run;setPlaying(true);ttsMsg('');
+  TTS.diag={start:false,err:null};TTS.keep=[];
   const same=voiceFor('M')===voiceFor('W');
+  setTimeout(()=>{if(run===TTS.run&&!TTS.diag.start){ttsMsg(noSoundHelp())}},3000);
   return new Promise(res=>{let i=0;
     const next=()=>{
       if(run!==TTS.run)return res(false);
       if(i>=lines.length){setPlaying(false);return res(true)}
       const l=lines[i++],u=new SpeechSynthesisUtterance(l.t),v=voiceFor(l.who||'W');
-      u.lang=v?v.lang:'en-US';if(v)u.voice=v;
+      u.lang=v?v.lang:'en-US';if(v)u.voice=v;u.volume=1;
       u.pitch=same&&l.who==='M'?0.8:same&&l.who==='W'?1.15:1;u.rate=TTS.rate;
-      u.onend=()=>setTimeout(next,l.gap==null?400:l.gap);u.onerror=()=>setTimeout(next,60);
-      TTS.keep=u;speechSynthesis.speak(u);
-    };next();});
+      u.onstart=()=>{TTS.diag.start=true;ttsMsg('')};
+      u.onend=()=>setTimeout(next,l.gap==null?400:l.gap);
+      u.onerror=ev=>{TTS.diag.err=ev&&ev.error||'unknown';if(ev&&ev.error==='interrupted'||ev&&ev.error==='canceled')return;setTimeout(next,60)};
+      TTS.keep.push(u);
+      try{speechSynthesis.resume()}catch(e){}
+      speechSynthesis.speak(u);
+    };
+    // iPhone 在 cancel() 之後立刻 speak() 常常沒有聲音，所以有在播放時先等一下
+    busy?setTimeout(next,150):next();});
+}
+function soundTest(){
+  ttsMsg('');const el=document.getElementById('ttsTest');if(el)el.textContent='播放中…';
+  speak([{t:'Sound test. If you can hear this, listening practice is ready.',who:'W',gap:0}]).then(()=>{
+    const e2=document.getElementById('ttsTest');if(e2)e2.textContent='測試聲音';
+    ttsMsg(TTS.diag.start?'<div class="note">有開始播放。如果還是聽不到，請關掉靜音開關並調大音量。</div>':noSoundHelp())});
 }
 function rateCtl(){return `<label class="rate"><span>語速</span><select id="rate" aria-label="朗讀語速">${[[0.85,'慢'],[0.95,'標準'],[1.05,'快']].map(([v,t])=>`<option value="${v}"${Math.abs(TTS.rate-v)<.01?' selected':''}>${t}</option>`).join('')}</select></label>`}
-function playBtn(extra){return TTS.ok?`<button class="play" id="playBtn" data-act="play" aria-pressed="false"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6h4v12H7zM13 6h4v12h-4z"/></svg><span class="pl">${Q&&Q.plays?'再聽一次':'播放'}</span>${extra||''}</button>`:'<div class="note">這台裝置不支援英文語音朗讀。iPhone 請到「設定 → 輔助使用 → 朗讀內容 → 聲音 → 英文」下載語音。</div>'}
+function playBtn(extra){return TTS.ok?`<button class="play" id="playBtn" data-act="play" aria-pressed="false"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="i-stop" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6h4v12H7zM13 6h4v12h-4z"/></svg><span class="pl">${Q&&Q.plays?'再聽一次':'播放'}</span>${extra||''}</button><div id="ttsMsg" aria-live="polite"></div>`:'<div class="note">這台裝置不支援英文語音朗讀。iPhone 請到「設定 → 輔助使用 → 朗讀內容 → 聲音 → 英文」下載語音。</div>'}
 
 function startL2(retry){
   let ids;
@@ -989,7 +1024,7 @@ function renderL2(){
 function renderL3(){
   const S3=L3[Q.si];
   const qs=Q.items.map((it,n)=>{const q=S3.q[it.k];
-    return `<div class="qblock"><h4>${n+1}. ${esc(q[0])}</h4><div class="opts">${it.opts.map((o,k)=>{
+    return `<div class="qblock"><h2>${n+1}. ${esc(q[0])}</h2><div class="opts">${it.opts.map((o,k)=>{
       let c='';if(Q.done){if(o.ok)c=' right';else if(it.pick===k)c=' wrong'}else if(it.pick===k)c=' pick';
       return `<button class="opt${c}" data-pickl3="${n}-${k}" ${Q.done?'disabled':''}><span class="bub">${LET[k]}</span><span>${esc(o.t)}</span></button>`}).join('')}</div>${Q.done?`<span class="exp">${esc(q[2])}</span>`:''}</div>`}).join('');
   const head=Q.done?`<div class="result"><b>${Q.c}/${Q.items.length}</b><span class="muted">聽了 ${Q.plays} 次${Q.plays>1?'（正式考試只播一次）':''}</span></div>`
@@ -1027,6 +1062,7 @@ function pracClick(e){
   if(!a)return false;
   const act=a.dataset.act;
   if(act==='play'){playCur();return true}
+  if(act==='ttstest'){soundTest();return true}
   if(act==='l2next'){if(Q.cur<Q.items.length-1){Q.cur++;Q.plays=0;render();playCur()}else finishL();return true}
   stopSpeech();
   if(act==='l2')startL2();
