@@ -163,6 +163,16 @@ nav button.on{color:var(--accent)}
 .card{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;cursor:pointer;text-align:center}
 .card .w{font-size:30px;font-weight:600;font-family:Georgia,serif;word-break:break-word}
 .card .m{font-size:18px}
+.say{position:relative;display:inline-grid;place-items:center;width:44px;height:44px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;padding:0}
+.say svg{width:20px;height:20px;fill:currentColor}
+.say.big{width:52px;height:52px;border-color:var(--accent);color:var(--accent)}
+.say.big svg{width:24px;height:24px}
+.warnchip{background:none;border:1px solid var(--M);color:var(--M)}
+.ex{margin:4px 0 0;display:flex;gap:10px;align-items:center;text-align:left;font-family:Georgia,"Noto Serif TC",serif;font-size:15px;line-height:1.55;color:var(--muted)}
+.ex b{color:var(--ink);font-weight:600}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--card);border:1px solid var(--line);border-radius:999px}
+.seg button{font:inherit;font-size:14px;min-height:40px;border:0;border-radius:999px;background:none;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:500}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .go{position:relative;font:inherit;font-size:13px;font-weight:500;color:var(--accent);background:var(--card);border:1px solid var(--accent);border-radius:999px;padding:6px 14px;min-height:32px;cursor:pointer}
 .go::after,.del::after{content:"";position:absolute;inset:-8px -4px}
@@ -765,11 +775,13 @@ function renderSet(){
 
 /* ===== 練習 ===== */
 const B=window.BANK||{p5:[],p7:[],vocab:''};
+const VEX={"accommodate":"The hotel can accommodate up to 300 guests for the conference.","agenda":"The budget review is the first item on today's agenda.","allocate":"Management will allocate extra funds to the marketing team.","amendment":"The lawyer suggested an amendment to the rental contract.","anticipate":"We anticipate a sharp rise in orders before the holidays.","applicant":"Each applicant must submit two letters of reference.","appointment":"Please call the clinic to reschedule your appointment.","approximately":"The renovation will take approximately three weeks.","assess":"An inspector will assess the damage to the warehouse.","asset":"Our experienced staff is the company's greatest asset.","attendee":"Every attendee will receive a name badge at the entrance.","audit":"The annual audit found no errors in the accounts.","authorize":"Only the manager can authorize refunds over $500.","available":"The meeting room is available after 3 p.m.","beverage":"Complimentary beverages will be served during the break.","brochure":"Our new brochure lists all of the tour packages.","budget":"The project was completed under budget.","candidate":"The committee interviewed five candidates for the position.","capacity":"The new factory will double our production capacity.","client":"Ms. Park is meeting a client in the lobby.","colleague":"I'll ask a colleague to cover my shift on Friday.","commute":"Many employees commute to the office by train.","compensation":"The position offers competitive compensation and benefits.","competitive":"We offer competitive prices on all office furniture.","comply":"All visitors must comply with the safety regulations.","confidential":"Salary information is strictly confidential.","confirm":"Please confirm your reservation by Thursday.","consecutive":"Sales have increased for three consecutive quarters.","consult":"You should consult the manual before using the machine.","contract":"Both parties signed the contract on Monday.","coordinate":"Ms. Lee will coordinate the training sessions.","courier":"The documents were delivered by courier this morning.","credentials":"Applicants must present their credentials at the interview.","deadline":"The deadline for submitting proposals is May 31.","defective":"Customers may return defective items within 30 days.","delegate":"A good manager knows how to delegate tasks.","deposit":"A 20 percent deposit is required to book the venue.","designate":"Smoking is permitted only in designated areas.","dispatch":"Your order will be dispatched within 24 hours.","distribute":"Please distribute the handouts before the seminar begins.","draft":"I've attached a draft of the press release for your review.","eligible":"Full-time employees are eligible for the bonus program.","enclose":"I have enclosed a copy of my résumé.","endorse":"The board voted to endorse the new policy.","enhance":"The software update will enhance security.","enroll":"Staff can enroll in the course through the company website.","estimate":"The contractor sent us an estimate for the repairs.","evaluate":"Supervisors evaluate each employee's performance every year.","exceed":"Sales this month exceeded our expectations.","expand":"The company plans to expand into Southeast Asia.","expenditure":"The report shows a decrease in travel expenditure.","expertise":"We need someone with expertise in data analysis.","expire":"Your membership will expire at the end of the month.","facilitate":"The new system will facilitate communication between departments.","feasible":"The engineers believe the plan is technically feasible.","fiscal":"Profits rose by 8 percent in the last fiscal year.","forward":"Could you forward me the client's e-mail?","fragile":"Please handle this package with care; it is fragile.","headquarters":"The company's headquarters are located in Singapore.","implement":"The firm will implement the new policy next month.","incentive":"Employees receive a cash incentive for meeting their targets.","inquiry":"Thank you for your inquiry about our services.","installment":"You can pay for the laptop in six monthly installments.","inventory":"The store closes early on Sunday to take inventory.","invoice":"The invoice must be paid within 30 days.","itinerary":"Your travel itinerary has been sent to your e-mail.","lease":"The office lease expires next spring.","liability":"The company accepts no liability for lost items.","logistics":"Our logistics team manages all international shipments.","maintenance":"The elevator will be closed for maintenance on Saturday.","mandatory":"Attendance at the safety training is mandatory.","merchandise":"All merchandise is 30 percent off this weekend.","merger":"The merger will create the largest airline in the region.","negotiate":"We are negotiating a new contract with the supplier.","notify":"Please notify the front desk if you plan to check out late.","objective":"Our main objective this year is to reduce costs.","obligation":"There is no obligation to purchase after the free trial.","occupancy":"Hotel occupancy is highest during the summer.","outstanding":"Please pay the outstanding balance by Friday.","overdue":"The library charges a fee for overdue books.","oversee":"Mr. Tan will oversee the construction project.","patron":"Patrons are asked to turn off their phones during the show.","payroll":"Payroll will be processed on the 25th of each month.","periodical":"The library subscribes to over 200 periodicals.","personnel":"Only authorized personnel may enter this area.","preliminary":"The preliminary results look promising.","premises":"Parking is available on the premises.","procedure":"Follow the standard procedure for reporting accidents.","proceeds":"All proceeds from the concert will go to charity.","procure":"The purchasing department procures office supplies.","projection":"Sales projections for next year are optimistic.","promote":"She was promoted to regional manager last month.","proposal":"The client approved our proposal for the new logo.","prospective":"We are hosting a dinner for prospective clients.","quarterly":"The quarterly report will be released next week.","quota":"Each sales representative has a monthly quota.","quote":"Please send us a quote for 500 printed catalogs.","reimburse":"The company will reimburse you for travel expenses.","relocate":"The firm decided to relocate its office downtown.","remit":"Please remit payment to the address below.","renovation":"The lobby is closed due to renovation.","representative":"A customer service representative will call you back.","requirement":"A driver's license is a requirement for this job.","reservation":"I'd like to make a reservation for four people.","retail":"The retail price of the printer is $199.","revenue":"Online sales now account for half of our revenue.","revise":"Please revise the schedule and send it back to me.","shipment":"The shipment was delayed because of bad weather.","stakeholder":"All stakeholders were invited to the planning meeting.","subsidiary":"The bank opened a subsidiary in Hong Kong.","subscription":"You can cancel your subscription at any time.","supervisor":"Report any problems to your supervisor immediately.","supplement":"The manual comes with a supplement on safety rules.","surplus":"The city reported a budget surplus this year.","tentative":"The meeting is tentatively scheduled for Tuesday.","terminate":"Either party may terminate the agreement with 30 days' notice.","transaction":"A receipt is printed after every transaction.","tuition":"The company pays tuition for job-related courses.","turnover":"High staff turnover has increased training costs.","unanimous":"The board reached a unanimous decision.","upcoming":"Don't forget to register for the upcoming workshop.","utility":"Rent includes all utilities except Internet.","vacancy":"We have a vacancy in the accounting department.","vendor":"We are looking for a new software vendor.","venue":"The venue for the awards ceremony has changed.","waive":"The bank will waive the annual fee for new customers.","warranty":"The washing machine comes with a two-year warranty.","withdraw":"You can withdraw cash at any of our branches.","workforce":"Women now make up half of the company's workforce.","yield":"The new strategy is expected to yield better results.","adjacent":"The parking lot is adjacent to the main building.","complimentary":"Guests receive a complimentary breakfast.","consolidate":"The two branches will consolidate into one office.","discrepancy":"There is a discrepancy between the invoice and the receipt.","durable":"These backpacks are made of durable material.","expedite":"We paid extra to expedite the delivery.","interim":"Mr. Wong will serve as interim director until June.","lucrative":"The company won a lucrative government contract.","mediate":"An outside expert was hired to mediate the dispute.","outsource":"Many firms outsource their customer service.","pending":"Your application is pending approval.","reconcile":"The accountant reconciled the bank statements.","solicit":"We are soliciting feedback from our customers.","streamline":"The new software will streamline the ordering process.","surpass":"This year's profits surpassed last year's record.","tenant":"Tenants must give two months' notice before moving out.","verify":"Please verify your e-mail address to activate your account."};
 const VOC=B.vocab.split(';').map(s=>{const[w,m]=s.split('|');return{w,m}});
 let WRONG=store.get('wrong',{p5:[],p7:[]});
 let P5LOG=store.get('p5log',[]);
 let P7DONE=store.get('p7done',{});
 let VLV=store.get('vocab',{});
+let VAUTO=store.get('vauto',true),VDIR=store.get('vdir','en');
 let Q=null,timerId=null;
 const LET='ABCD';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -808,10 +820,22 @@ function startP7(pi,onlyWrong){
   Q={kind:'p7',pi,items:qs.map(k=>({k,opts:mkOpts(P.q[k][1]),pick:-1})),t0:Date.now(),limit:qs.length*60,done:false};
   tab='prac';render();startTimer();window.scrollTo(0,0);
 }
-function startVocab(){
-  const sorted=shuf(VOC.map((v,i)=>i)).sort((a,b)=>(VLV[VOC[a].w]||0)-(VLV[VOC[b].w]||0));
-  Q={kind:'vocab',ids:sorted.slice(0,20),cur:0,flip:false,known:0,done:false};
-  tab='prac';render();
+function startVocab(retry){
+  let ids;
+  if(retry){const w=new Set(WRONG.v);ids=shuf(VOC.map((v,i)=>i).filter(i=>w.has(VOC[i].w))).slice(0,20)}
+  else{const w=new Set(WRONG.v);// 先放不熟的字，再放熟練度低的字
+    ids=shuf(VOC.map((v,i)=>i)).sort((a,b)=>(w.has(VOC[b].w)-w.has(VOC[a].w))||((VLV[VOC[a].w]||0)-(VLV[VOC[b].w]||0))).slice(0,20)}
+  if(!ids.length){pracView='wrong';Q=null;tab='prac';render();return}
+  Q={kind:'vocab',ids,cur:0,flip:false,known:0,miss:[],retry:!!retry,done:false};
+  tab='prac';render();sayWord();
+}
+function sayWord(force){if(!Q||Q.kind!=='vocab'||Q.cur>=Q.ids.length||!(force||VAUTO))return;if(VDIR==='zh'&&!Q.flip&&!force)return;speak([{t:VOC[Q.ids[Q.cur]].w,who:'W',gap:0}])}
+function markWord(ok){
+  const w=VOC[Q.ids[Q.cur]].w,has=WRONG.v.includes(w);
+  VLV[w]=Math.max(0,Math.min(3,(VLV[w]||0)+(ok?1:-1)));
+  if(ok){Q.known++;if(has)WRONG.v=WRONG.v.filter(x=>x!==w)}
+  else{Q.miss.push(w);if(!has)WRONG.v.push(w)}
+  store.set('vocab',VLV);store.set('wrong',WRONG);Q.cur++;Q.flip=false;render();sayWord();
 }
 function finish(){
   if(Q.kind==='l3')return finishL();
@@ -830,7 +854,7 @@ function finish(){
   Q.c=c;store.set('wrong',WRONG);render();window.scrollTo(0,0);
 }
 function renderPracHome(){
-  const last=P5LOG.slice(-1)[0],p7n=Object.keys(P7DONE).length,known=VOC.filter(v=>(VLV[v.w]||0)>=2).length,wn=WRONG.p5.length+WRONG.p7.length+WRONG.l2.length+WRONG.l3.length,l2last=L2LOG.slice(-1)[0],l3n=Object.keys(L3DONE).length;
+  const last=P5LOG.slice(-1)[0],p7n=Object.keys(P7DONE).length,known=VOC.filter(v=>(VLV[v.w]||0)>=2).length,wn=WRONG.p5.length+WRONG.p7.length+WRONG.l2.length+WRONG.l3.length+WRONG.v.length,l2last=L2LOG.slice(-1)[0],l3n=Object.keys(L3DONE).length;
   return `<section>
   <div class="eyebrow">聽力</div>
   <div class="modes">
@@ -842,7 +866,7 @@ function renderPracHome(){
   <div class="modes">
     <button class="mode" data-act="p5"><b>Part 5 限時</b><span>30 題・9 分鐘，題庫 ${B.p5.length} 題</span><span class="big">${last?last.c+'/'+last.n:'—'}</span><span>${last?'上次用時 '+fmt(last.s):'還沒做過'}</span></button>
     <button class="mode" data-act="p7list"><b>Part 7 閱讀</b><span>每題限時 1 分鐘，${B.p7.length} 篇</span><span class="big">${p7n}/${B.p7.length}</span><span>已完成篇數</span></button>
-    <button class="mode" data-act="vocab"><b>單字卡</b><span>每輪 20 張，不熟的優先</span><span class="big">${known}/${VOC.length}</span><span>已熟記</span></button>
+    <button class="mode" data-act="vocab"><b>單字卡</b><span>每輪 20 張，不熟的優先</span><span class="big">${known}/${VOC.length}</span><span>已熟記${WRONG.v.length?'・不熟 '+WRONG.v.length:''}</span></button>
     <button class="mode" data-act="wrong"><b>錯題本</b><span>答錯的題目自動收進來</span><span class="big">${wn}</span><span>待訂正</span></button>
   </div>
   ${P5LOG.length?`<div><div class="eyebrow" style="margin-bottom:6px">Part 5 紀錄</div><div class="slist">${P5LOG.slice(-5).reverse().map(l=>`<div class="srow" style="grid-template-columns:1fr auto auto"><span class="mono">${l.d}</span><span class="mono">${l.c}/${l.n}</span><span class="mono ${l.s<=540?'ok':'bad'}">${fmt(l.s)}</span></div>`).join('')}</div></div>`:''}
@@ -861,8 +885,10 @@ function renderWrong(){
   ${byL.length?`<div class="rows">${byL.map(si=>`<button class="row" data-l3w="${si}" style="grid-template-columns:1fr auto"><span class="s">${esc(L3[si].title)}<br><small class="muted">${L3[si].t}</small></span><span class="st mono bad">${l3.filter(x=>x[0]===si).length} 題</span></button>`).join('')}</div>`:''}
   ${WRONG.p5.length?`<button class="btn" data-act="p5retry">重做 Part 5 錯題（${WRONG.p5.length} 題）</button>`:''}
   ${byP.length?`<div class="rows">${byP.map(pi=>`<button class="row" data-p7w="${pi}" style="grid-template-columns:1fr auto"><span class="s">${esc(B.p7[pi].title)}</span><span class="st mono bad">${p7.filter(x=>x[0]===pi).length} 題</span></button>`).join('')}</div>`:''}
-  ${!WRONG.p5.length&&!byP.length&&!WRONG.l2.length&&!byL.length?'<div class="note">目前沒有錯題。做完練習後，答錯的題目會自動收進這裡，重做答對就會移除。</div><button class="btn" data-act="l2">先做一組 Part 2 聽力</button>':''}
-  ${WRONG.p5.length?`<div class="slist">${WRONG.p5.map(i=>{const q=B.p5[i];return `<div class="rv"><span class="s">${esc(q[0].replace('___','<u>'+q[1].split('|')[0]+'</u>')).replace(/&lt;(\/?)u&gt;/g,'<$1u>')}</span><span class="exp">${esc(q[2])}｜${esc(q[3])}</span></div>`}).join('')}</div>`:''}
+  ${WRONG.v.length?`<button class="btn" data-act="vocabretry">練習不熟的單字（${WRONG.v.length} 個）</button>`:''}
+  ${!WRONG.p5.length&&!byP.length&&!WRONG.l2.length&&!byL.length&&!WRONG.v.length?'<div class="note">目前沒有錯題。做完練習後，答錯的題目會自動收進這裡，重做答對就會移除。</div><button class="btn" data-act="l2">先做一組 Part 2 聽力</button>':''}
+  ${WRONG.v.length?`<div class="eyebrow">不熟的單字</div>${wordList(WRONG.v)}`:''}
+  ${WRONG.p5.length?`<div class="eyebrow">Part 5 錯題</div><div class="slist">${WRONG.p5.map(i=>{const q=B.p5[i];return `<div class="rv"><span class="s">${esc(q[0].replace('___','<u>'+q[1].split('|')[0]+'</u>')).replace(/&lt;(\/?)u&gt;/g,'<$1u>')}</span><span class="exp">${esc(q[2])}｜${esc(q[3])}</span></div>`}).join('')}</div>`:''}
   </section>`;
 }
 function bar(label){return `<div class="qbar"><button class="navbtn" data-act="quit" aria-label="離開">×</button><span class="muted" style="font-size:13px">${label}</span><span class="timer" id="tm">${Q.limit?fmt(Q.limit-Math.floor((Date.now()-Q.t0)/1000)):fmt(Math.floor((Date.now()-Q.t0)/1000))}</span></div>`}
@@ -890,16 +916,27 @@ function renderP7(){
   <div class="passage">${esc(P.text)}</div>${qs}
   ${Q.done?`<div class="row2"><button class="btn" data-act="p7list">下一篇</button><button class="btn ghost" data-act="home">回練習首頁</button></div>`:'<button class="btn" data-act="finish">交卷</button>'}</section>`;
 }
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const VMAP=Object.fromEntries(VOC.map(v=>[v.w,v.m]));
+function sayBtn(w,cls){return TTS.ok?`<button class="say${cls?' '+cls:''}" data-say="${esc(w)}" aria-label="播放 ${esc(w)} 的發音">${SPK}</button>`:''}
+function wordList(ws){return `<div class="slist">${ws.map(w=>`<div class="srow" style="grid-template-columns:1fr auto"><span><b lang="en" style="font-weight:600">${esc(w)}</b><br><small class="muted">${esc(VMAP[w]||'')}</small></span>${sayBtn(w)}</div>`).join('')}</div>`}
 function renderVocab(){
-  if(Q.cur>=Q.ids.length)return `<section><div class="result"><b>${Q.known}/${Q.ids.length}</b><span class="muted">這輪認識的字</span></div><div class="row2"><button class="btn" data-act="vocab">再一輪</button><button class="btn ghost" data-act="home">回練習首頁</button></div></section>`;
-  const v=VOC[Q.ids[Q.cur]];
-  return `<section><div class="qbar"><button class="navbtn" data-act="quit" aria-label="離開">×</button><span class="muted" style="font-size:13px">單字 ${Q.cur+1} / ${Q.ids.length}</span><span class="mono muted" style="font-size:13px">熟練度 ${VLV[v.w]||0}</span></div>
-  <div class="card" data-act="flip"><span class="w">${esc(v.w)}</span>${Q.flip?`<span class="m">${esc(v.m)}</span>`:'<span class="muted" style="font-size:13px">點一下看中文</span>'}</div>
+  if(Q.cur>=Q.ids.length)return `<section><div class="result"><b>${Q.known}/${Q.ids.length}</b><span class="muted">這輪認識的字</span></div>
+  ${Q.miss.length?`<div class="eyebrow">這輪不熟的字（已收進錯題本）</div>${wordList(Q.miss)}`:''}
+  <div class="row2"><button class="btn" data-act="${Q.retry&&WRONG.v.length?'vocabretry':'vocab'}">${Q.retry&&WRONG.v.length?'再練不熟的字':'再一輪'}</button><button class="btn ghost" data-act="home">回練習首頁</button></div></section>`;
+  const v=VOC[Q.ids[Q.cur]],bad=WRONG.v.includes(v.w);
+  return `<section><div class="qbar"><button class="navbtn" data-act="quit" aria-label="離開">×</button><span class="muted" style="font-size:13px">${Q.retry?'不熟的字':'單字'} ${Q.cur+1} / ${Q.ids.length}</span><span class="mono muted" style="font-size:13px">熟練度 ${VLV[v.w]||0}</span></div>
+  <div class="seg" role="group" aria-label="出題方向"><button type="button" data-vdir="en" aria-pressed="${VDIR==='en'}">英 → 中</button><button type="button" data-vdir="zh" aria-pressed="${VDIR==='zh'}">中 → 英</button></div>
+  <div class="card" data-act="flip">${bad?'<span class="chip warnchip">上次不熟</span>':''}
+    ${VDIR==='zh'&&!Q.flip?`<span class="m" style="font-size:24px;font-weight:600">${esc(v.m)}</span><span class="muted" style="font-size:13px">想一想英文怎麼說、怎麼拼</span>`:`<span class="w" lang="en">${esc(v.w)}</span>${sayBtn(v.w,'big')}`}
+    ${Q.flip?`${VDIR==='en'?`<span class="m">${esc(v.m)}</span>`:''}${VEX[v.w]?`<p class="ex" lang="en">${esc(VEX[v.w]).replace(new RegExp('\\b('+v.w.slice(0,Math.max(4,v.w.length-2))+'\\w*)','i'),'<b>$1</b>')}${sayBtn(VEX[v.w])}</p>`:''}`:`<button class="btn ghost" data-act="flip" type="button">${VDIR==='zh'?'看英文':'看中文和例句'}</button>`}</div>
+  <div id="ttsMsg" aria-live="polite"></div>
+  ${TTS.ok?`<label class="chk" style="justify-content:center;font-size:13px;color:var(--muted)"><input type="checkbox" id="vauto"${VAUTO?' checked':''}> 換卡時自動發音</label>`:''}
   <div class="row2"><button class="btn ghost" data-vk="0">不熟</button><button class="btn" data-vk="1">認識</button></div></section>`;
 }
 /* ===== 聽力（用手機內建英文語音朗讀） ===== */
 const L2=B.l2||[],L3=B.l3||[];
-if(!WRONG.l2)WRONG.l2=[];if(!WRONG.l3)WRONG.l3=[];
+if(!WRONG.l2)WRONG.l2=[];if(!WRONG.l3)WRONG.l3=[];if(!WRONG.v)WRONG.v=[];
 let L2LOG=store.get('l2log',[]),L3DONE=store.get('l3done',{});
 const TTS={ok:!!window.speechSynthesis&&typeof window.SpeechSynthesisUtterance==='function',rate:+store.get('rate',0.95),voices:[],run:0,keep:null};
 function loadVoices(){if(!TTS.ok)return;try{TTS.voices=(speechSynthesis.getVoices()||[]).filter(x=>/^en[-_]/i.test(x.lang))}catch(e){}}
@@ -1057,8 +1094,9 @@ function pracClick(e){
     if(Q.cur<Q.items.length-1){render();setTimeout(()=>{if(Q&&!Q.done){Q.cur++;render()}},180)}else render();return true}
   const pk7=e.target.closest('[data-pick7]');if(pk7&&Q){const[n,k]=pk7.dataset.pick7.split('-').map(Number);Q.items[n].pick=k;
     const y=window.scrollY;render();window.scrollTo(0,y);return true}
-  const vk=e.target.closest('[data-vk]');if(vk&&Q){const v=VOC[Q.ids[Q.cur]].w,ok=vk.dataset.vk==='1';
-    VLV[v]=Math.max(0,Math.min(3,(VLV[v]||0)+(ok?1:-1)));if(ok)Q.known++;store.set('vocab',VLV);Q.cur++;Q.flip=false;render();return true}
+  const vd=e.target.closest('[data-vdir]');if(vd){VDIR=vd.dataset.vdir;store.set('vdir',VDIR);if(Q&&Q.kind==='vocab'){Q.flip=false;render();sayWord()}return true}
+  const sy=e.target.closest('[data-say]');if(sy){speak([{t:sy.dataset.say,who:'W',gap:0}]);return true}
+  const vk=e.target.closest('[data-vk]');if(vk&&Q&&Q.kind==='vocab'){markWord(vk.dataset.vk==='1');return true}
   if(!a)return false;
   const act=a.dataset.act;
   if(act==='play'){playCur();return true}
@@ -1070,7 +1108,8 @@ function pracClick(e){
   else if(act==='p5')startP5();
   else if(act==='p5retry')startP5(true);
   else if(act==='vocab')startVocab();
-  else if(act==='flip'){Q.flip=!Q.flip;render()}
+  else if(act==='vocabretry')startVocab(true);
+  else if(act==='flip'){Q.flip=!Q.flip;render();if(Q.flip&&VDIR==='zh')sayWord()}
   else if(act==='next'){Q.cur++;render()}
   else if(act==='prev'){Q.cur--;render()}
   else if(act==='finish')finish();
@@ -1104,7 +1143,7 @@ document.addEventListener('click',e=>{
   if(e.target.id==='pushOn'){enablePush();return}
   if(e.target.id==='reset'){if(confirmReset){DONE={};store.set('done',DONE);confirmReset=false}else confirmReset=true;render()}
 });
-document.addEventListener('change',e=>{if(e.target.id==='rate'){TTS.rate=+e.target.value;store.set('rate',TTS.rate);return}if(e.target.id==='pw'||e.target.id==='po'){S[e.target.id]=+e.target.value;store.set('settings',S);if(PUSHID)syncPush().then(ok=>pushMsg(ok?'已同步新的提醒時間。':'同步失敗，請稍後按「重新同步提醒」。'))}});
+document.addEventListener('change',e=>{if(e.target.id==='vauto'){VAUTO=e.target.checked;store.set('vauto',VAUTO);if(VAUTO)sayWord(true);return}if(e.target.id==='rate'){TTS.rate=+e.target.value;store.set('rate',TTS.rate);return}if(e.target.id==='pw'||e.target.id==='po'){S[e.target.id]=+e.target.value;store.set('settings',S);if(PUSHID)syncPush().then(ok=>pushMsg(ok?'已同步新的提醒時間。':'同步失敗，請稍後按「重新同步提醒」。'))}});
 document.addEventListener('submit',e=>{
   e.preventDefault();
   if(e.target.id==='scForm'){
